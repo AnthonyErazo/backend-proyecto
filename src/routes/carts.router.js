@@ -1,6 +1,8 @@
 const { Router } = require('express');
 const CartManager = require('../managers/cartsManager.js');
+const ProductManager = require('../managers/productManager.js');
 const cartsService=new CartManager();
+const productsService=new ProductManager();
 const router = Router();
 
 router
@@ -9,7 +11,8 @@ router
             const {cid}=req.params;
             let dataCart = await cartsService.getProductsByCartId(cid);
             if (dataCart !== null) {
-                return res.status(200).json({ status: 'ok', data: dataCart });
+                const productDetail=await productsService.getProductsDetails(dataCart);
+                return res.status(200).json({ status: 'ok', data: productDetail });
             } else {
                 return res.status(404).json({ status: 'error', message: 'Carrito no encontrado.' });
             }

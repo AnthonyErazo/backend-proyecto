@@ -11,8 +11,8 @@ class CartManager{
     }
     async getCartsFromFile() {
         try {
-            const archivo = await fs.promises.readFile(this.path, 'utf-8');
-            return JSON.parse(archivo) || { currentId: 0, carts: [] };
+            const file = await fs.promises.readFile(this.path, 'utf-8');
+            return JSON.parse(file) || { currentId: 0, carts: [] };
         } catch (error) {
             return { currentId: 0, carts: [] };
         }
@@ -44,8 +44,8 @@ class CartManager{
             currentId: currentId,
             carts: carts,
         };
-        const archivo = JSON.stringify(data, null, 2);
-        await fs.promises.writeFile(this.path, archivo);
+        const file = JSON.stringify(data, null, 2);
+        await fs.promises.writeFile(this.path, file);
     }
 }
 module.exports = CartManager

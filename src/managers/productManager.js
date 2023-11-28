@@ -29,8 +29,8 @@ class ProductManager {
     }
     async getProductsFromFile() {
         try {
-            const archivo = await fs.promises.readFile(this.path, 'utf-8');
-            return JSON.parse(archivo) || { currentId: 0, products: [] };
+            const file = await fs.promises.readFile(this.path, 'utf-8');
+            return JSON.parse(file) || { currentId: 0, products: [] };
         } catch (error) {
             return { currentId: 0, products: [] };
         }
@@ -77,8 +77,17 @@ class ProductManager {
             currentId: currentId,
             products: products,
         };
-        const archivo = JSON.stringify(data, null, 2);
-        await fs.promises.writeFile(this.path, archivo);
+        const file = JSON.stringify(data, null, 2);
+        await fs.promises.writeFile(this.path, file);
+    }
+    async getProductsDetails(productQuantities) {
+        const { products } = await this.getProductsFromFile();
+        const details = productQuantities.map(({ id, quantity }) => {
+            const product = products.find((p) => p.id == id);
+            return product ? { ...product, quantity } : null;
+        });
+    
+        return details.filter((product) => product !== null);
     }
 }
 
