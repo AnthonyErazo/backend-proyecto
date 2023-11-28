@@ -1,32 +1,31 @@
 const fs = require('fs');
+const path='src/mockDB/productos.json'
 class ProductManager {
     constructor() {
-        this.path = "archivo.txt";
+        this.path = path;
     }
     async addProduct(product) {
         const {
             title = "",
             description = "",
             price = 0,
-            thumbnail = null,
+            thumbnail = [],
             code = "",
-            stock = 0
+            stock = 0,
+            status=true,
+            category=""
         } = product;
-        if (!(title && description && price && thumbnail && code && stock)) {
-            console.log("Todos los campos ingresados son obligatorios.");
-            return;
+        if (!(title && description && price && status && code && stock && category)) {
+            throw new Error("Todos los campos ingresados son obligatorios.");
         }
-
         const { currentId, products } = await this.getProductsFromFile();
-        const id = currentId + 1;
-
+        const newProductId = currentId ? currentId + 1 : 1;
         if (products.some((p) => p.code === code)) {
-            console.log("El código del producto ya existe.");
-            return;
+            throw new Error("El código del producto ya existe.");
         }
 
-        products.push({ id, ...product });
-        await this.saveProductsToFile(products);
+        products.push({ id:`${newProductId}`, ...product });
+        await this.saveProductsToFile(products,newProductId);
     }
     async getProductsFromFile() {
         try {
@@ -38,42 +37,44 @@ class ProductManager {
     }
     async getProducts() {
         try {
-            const archivo = await fs.promises.readFile(this.path, 'utf-8');
-            const data= JSON.parse(archivo);
-            return data.products||[];
+            const { products } = await this.getProductsFromFile();
+            return products || [];
         } catch (error) {
             return [];
         }
     }
 
     async getProductById(id) {
-        const products = await this.getProducts();
-        const productoId = products.find((p) => p.id == id)
-        return productoId || "Not found";
+        const { products } = await this.getProductsFromFile();
+        const product=products.find((p) => p.id == id)
+        return product? product : null;
     }
     async updateProduct(id, updatedFields) {
-        const products = await this.getProducts();
+        const { currentId, products } = await this.getProductsFromFile();
         const existingProductIndex = products.findIndex((p) => p.id == id);
         if (existingProductIndex!==-1) {
+            if (updatedFields.id && updatedFields.id !== id) {
+                throw new Error("No se permite modificar el campo 'id' ");
+            }
             products[existingProductIndex] = { ...products[existingProductIndex], ...updatedFields };
 
-            await this.saveProductsToFile(products);
+            await this.saveProductsToFile(products,currentId);
         } else {
             console.log("Producto no encontrado.");
         }
     }
     async deleteProduct(id) {
-        const products = await this.getProducts();
+        const { currentId, products } = await this.getProductsFromFile();
         const newProducts = products.filter((p) => p.id !== id);
         if (newProducts.length < products.length) {
-            await this.saveProductsToFile(newProducts);
+            await this.saveProductsToFile(newProducts,currentId);
         } else {
             console.log("Producto no encontrado.");
         }
     }
-    async saveProductsToFile(products) {
+    async saveProductsToFile(products,currentId) {
         const data = {
-            currentId: products.length > 0 ? products[products.length - 1].id : 0,
+            currentId: currentId,
             products: products,
         };
         const archivo = JSON.stringify(data, null, 2);
