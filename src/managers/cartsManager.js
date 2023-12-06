@@ -19,15 +19,15 @@ class CartManager{
     }
     async getProductsByCartId(cid) {
         const { carts } = await this.getCartsFromFile();
-        const cart = carts.find((c) => c.id == cid);
+        const cart = carts.find((c) => c.id === cid);
         return cart ? cart.product : null;
     }
     async addProductByCartId(cid,pid) {
         const { currentId, carts } = await this.getCartsFromFile();
-        const existingCartIndex = carts.findIndex((c) => c.id == cid);
+        const existingCartIndex = carts.findIndex((c) => c.id ===cid);
         if (existingCartIndex!==-1) {
             const cart=carts[existingCartIndex];
-            const existingProductIndex = cart.product.findIndex((p) => p.id == pid);
+            const existingProductIndex = cart.product.findIndex((p) => p.id === pid);
             if (existingProductIndex !== -1) {
                 cart.product[existingProductIndex].quantity += 1;
             } else {

@@ -46,12 +46,12 @@ class ProductManager {
 
     async getProductById(id) {
         const { products } = await this.getProductsFromFile();
-        const product=products.find((p) => p.id == id)
+        const product=products.find((p) => p.id === id)
         return product? product : null;
     }
     async updateProduct(id, updatedFields) {
         const { currentId, products } = await this.getProductsFromFile();
-        const existingProductIndex = products.findIndex((p) => p.id == id);
+        const existingProductIndex = products.findIndex((p) => p.id === id);
         if (existingProductIndex!==-1) {
             if (updatedFields.id && updatedFields.id !== id) {
                 throw new Error("No se permite modificar el campo 'id' ");
@@ -83,7 +83,7 @@ class ProductManager {
     async getProductsDetails(productQuantities) {
         const { products } = await this.getProductsFromFile();
         const details = productQuantities.map(({ id, quantity }) => {
-            const product = products.find((p) => p.id == id);
+            const product = products.find((p) => p.id === id);
             return product ? { ...product, quantity } : null;
         });
     
