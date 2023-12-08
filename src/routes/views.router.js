@@ -20,18 +20,7 @@ router.get('/', async (req,res)=> {
 
 router.get('/prod', (req, res) => {
     
-    const userMock = {
-        title: 'Mercadito Fede', 
-        name: 'Fede el mejor',
-        role:  'admin'
-    }
-
-    res.render('realTimeProducts', {
-        title: userMock.title, 
-        name: userMock.name,
-        isAdmin: userMock.role === 'admin',
-        products: productMock
-    })
+    
 })
 
 module.exports = router
