@@ -4,11 +4,6 @@ const ProductManager = require('../managers/productManager')
 const router = Router()
 const productService = new ProductManager('./src/products.json')
 
-const productMock = [
-    {id:'1', title: 'Product 1', price: 1500, stock: 100, description: 'Esto es un prod. '},
-    {id:'2', title: 'Product 2', price: 1500, stock: 100, description: 'Esto es un prod. '},
-    {id:'3', title: 'Product 3', price: 1500, stock: 100, description: 'Esto es un prod. '},
-]
 
 router.get('/', async (req,res)=> {
     const products=await productService.getProducts();
@@ -18,9 +13,12 @@ router.get('/', async (req,res)=> {
     })
 })
 
-router.get('/prod', (req, res) => {
-    
-    
+router.get('/realtimeproducts',async (req, res) => {
+    const products=await productService.getProducts();
+    res.render('realTimeProducts', {
+        title: 'Productos en tiempo real',
+        products: products
+    })
 })
 
 module.exports = router

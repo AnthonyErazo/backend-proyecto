@@ -65,7 +65,7 @@ class ProductManager {
     }
     async deleteProduct(id) {
         const { currentId, products } = await this.getProductsFromFile();
-        const newProducts = products.filter((p) => p.id !== id);
+        const newProducts = products.filter((p) => parseInt(p.id) !== parseInt(id));
         if (newProducts.length < products.length) {
             await this.saveProductsToFile(newProducts,currentId);
         } else {
