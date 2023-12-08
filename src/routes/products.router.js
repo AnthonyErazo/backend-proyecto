@@ -10,11 +10,15 @@ router
             const { limit } = req.query;
             let dataProducts = await productsService.getProducts();
             if (!!limit) dataProducts = dataProducts.slice(0, parseInt(limit));
+            const io = req.app.get('socketio');
+            io.emit('updateProducts', dataProducts);
             return res.status(200).json({ status: 'ok', data: dataProducts });
+
         } catch (error) {
             console.error('Error al obtener productos:', error);
             return res.status(500).json({ status: 'error', message: 'Error al obtener productos.' });
         }
+
     })
     .get('/:pid', async (req, res) => {
         try {
@@ -34,6 +38,7 @@ router
         try {
             const product = req.body;
             await productsService.addProduct(product);
+            
             return res.status(200).json({ status: 'ok', data: product });
         } catch (error) {
             console.error('Error al insertar producto:', error);

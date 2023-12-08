@@ -1,0 +1,19 @@
+<div>
+    <h1>{{title}}</h1>
+    <table>
+        <tr>
+            <td>Nombre</td>
+            <td>Precio</td>
+            <td>Stock</td>
+            <td>Descripcion</td>
+        </tr>
+        {{#each products}}
+        <tr>
+            <td>{{ this.title }}</td>
+            <td>{{ this.price }}</td>
+            <td>{{ this.stock }}</td>
+            <td>{{ this.description }}</td>
+        </tr>
+        {{/each}}
+    </table>
+</div>
