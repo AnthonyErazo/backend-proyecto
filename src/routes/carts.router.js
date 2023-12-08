@@ -1,8 +1,6 @@
 const { Router } = require('express');
-const CartManager = require('../managers/cartsManager.js');
-const ProductManager = require('../managers/productManager.js');
-const cartsService=new CartManager();
-const productsService=new ProductManager();
+const managers = require('../managers/index');
+const cartsService = managers.cartManager;
 const router = Router();
 
 router
@@ -10,12 +8,7 @@ router
         try {
             const {cid}=req.params;
             let dataCart = await cartsService.getProductsByCartId(cid);
-            if (dataCart !== null) {
-                const productDetail=await productsService.getProductsDetails(dataCart);
-                return res.status(200).json({ status: 'ok', data: productDetail });
-            } else {
-                return res.status(404).json({ status: 'error', message: 'Carrito no encontrado.' });
-            }
+            return res.status(200).json({ status: 'ok', data: dataCart });
         } catch (error) {
             console.error('Error al obtener productos del carrito:', error);
             return res.status(500).json({ status: 'error', message: 'Error al obtener productos del carrito.' });
@@ -33,8 +26,9 @@ router
     .post('/:cid/product/:pid',async (req,res)=>{
         try {
             const{cid,pid}=req.params;
-            await cartsService.addProductByCartId(cid,pid);
-            return res.status(200).json({ status: 'ok', data: [] });
+            const newCart=await cartsService.addProductByCartId(cid,pid);
+            let dataCart = await cartsService.getProductsByCartId(newCart);
+            return res.status(200).json({ status: 'ok', data: dataCart });
         } catch (error) {
             console.error('Error al agregar producto al carrito:', error);
             return res.status(500).json({ status: 'error', message: 'Error al agregar producto al carrito.' });

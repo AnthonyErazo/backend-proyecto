@@ -1,8 +1,8 @@
 const { Router } = require('express');
-const ProductManager = require('../managers/productManager.js');
+const managers = require('../managers');
 
 const router = Router();
-const productsService = new ProductManager();
+const productsService =  managers.productManager;
 
 router
     .get('/', async (req, res) => {

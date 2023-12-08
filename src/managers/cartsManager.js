@@ -1,14 +1,16 @@
 const fs = require('fs');
-const path='src/mockDB/carrito.json'
-class CartManager{
-    constructor(){
+const path = 'src/mockDB/carrito.json'
+const ProductManager = require('../managers/productManager.js');
+const productsService=new ProductManager();
+class CartManager {
+    constructor() {
         this.path = path;
     }
     async createNewCart() {
         const { currentId, carts } = await this.getCartsFromFile();
-        carts.push({ id:`${currentId+1}`, product:[] });
-        await this.saveCartToFile(carts,currentId+1);
-        return { id:`${currentId+1}`, product:[] }
+        carts.push({ id: `${currentId + 1}`, product: [] });
+        await this.saveCartToFile(carts, currentId + 1);
+        return { id: `${currentId + 1}`, product: [] }
     }
     async getCartsFromFile() {
         try {
@@ -21,26 +23,38 @@ class CartManager{
     async getProductsByCartId(cid) {
         const { carts } = await this.getCartsFromFile();
         const cart = carts.find((c) => c.id === cid);
-        return cart ? cart.product : null;
+        const dataCart=cart ? cart.product : null;
+        if (dataCart !== null) {
+            const productDetail=await productsService.getProductsDetails(dataCart);
+            return {idCart:cid,products:productDetail};
+        } else {
+            throw new Error('Carrito no encontrado.');
+        }
     }
-    async addProductByCartId(cid,pid) {
+    async addProductByCartId(cid, pid) {
         const { currentId, carts } = await this.getCartsFromFile();
-        const existingCartIndex = carts.findIndex((c) => c.id ===cid);
-        if (existingCartIndex!==-1) {
-            const cart=carts[existingCartIndex];
+        const existingCartIndex = carts.findIndex((c) => c.id === cid);
+        if (existingCartIndex !== -1) {
+            const cart = carts[existingCartIndex];
             const existingProductIndex = cart.product.findIndex((p) => p.id === pid);
+            const product = await productsService.getProductById(pid);
+
+            if (!product) {
+                throw new Error("Producto no encontrado.");
+            }
             if (existingProductIndex !== -1) {
                 cart.product[existingProductIndex].quantity += 1;
             } else {
                 cart.product.push({ id: pid, quantity: 1 });
             }
             carts[existingCartIndex] = cart;
-            await this.saveCartToFile(carts,currentId);
+            await this.saveCartToFile(carts, currentId);
+            return cid;
         } else {
-            console.log("Carrito no encontrado.");
+            throw Error("Carrito no encontrado.");
         }
     }
-    async saveCartToFile(carts,currentId) {
+    async saveCartToFile(carts, currentId) {
         const data = {
             currentId: currentId,
             carts: carts,
