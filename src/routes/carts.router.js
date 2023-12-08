@@ -23,8 +23,8 @@ router
     })
     .post('/',async (req,res)=>{
         try {
-            await cartsService.createNewCart();
-            return res.status(200).json({ status: 'ok', data: [] });
+            const newCart=await cartsService.createNewCart();
+            return res.status(200).json({ status: 'ok', data: newCart });
         } catch (error) {
             console.error('Error al crear carrito:', error);
             return res.status(500).json({ status: 'error', message: 'Error al crear carrito.' });

@@ -7,13 +7,12 @@ const productsService = new ProductManager();
 router
     .get('/', async (req, res) => {
         try {
-            const { limit } = req.query;
-            let dataProducts = await productsService.getProducts();
-            if (!!limit) dataProducts = dataProducts.slice(0, parseInt(limit));
-            const io = req.app.get('socketio');
-            io.emit('updateProducts', dataProducts);
-            return res.status(200).json({ status: 'ok', data: dataProducts });
-
+            const { limit, ...otherParams } = req.query;
+            if (Object.keys(otherParams).length > 0 || (limit !== undefined && isNaN(parseInt(limit)))) return res.status(200).json({ status: 'ok', data: [] });
+            const dataProducts = await productsService.getProducts();
+            if (limit === undefined || isNaN(parseInt(limit))) return res.status(200).json({ status: 'ok', data: dataProducts });
+            const limitedProducts = dataProducts.slice(0, parseInt(limit));
+            return res.status(200).json({ status: 'ok', data: limitedProducts });
         } catch (error) {
             console.error('Error al obtener productos:', error);
             return res.status(500).json({ status: 'error', message: 'Error al obtener productos.' });
@@ -37,9 +36,9 @@ router
     .post('/', async (req, res) => {
         try {
             const product = req.body;
-            await productsService.addProduct(product);
+            newProducts=await productsService.addProduct(product);
             
-            return res.status(200).json({ status: 'ok', data: product });
+            return res.status(200).json({ status: 'ok', data: newProducts});
         } catch (error) {
             console.error('Error al insertar producto:', error);
             return res.status(500).json({ status: 'error', message: 'Error al insertar producto.' });
@@ -49,8 +48,8 @@ router
         try {
             const product = req.body;
             const { pid } = req.params;
-            await productsService.updateProduct(pid, product);
-            return res.status(200).json({ status: 'ok', data: product });
+            const newProducts=await productsService.updateProduct(pid, product);
+            return res.status(200).json({ status: 'ok', data: newProducts });
         } catch (error) {
             console.error('Error al modificar producto:', error);
             return res.status(500).json({ status: 'error', message: 'Error al modificar producto.' });
@@ -59,8 +58,8 @@ router
     .delete('/:pid', async (req, res) => {
         try {
             const { pid } = req.params;
-            await productsService.deleteProduct(pid);
-            return res.status(200).json({ status: 'ok', data: [] });
+            const newProducts=await productsService.deleteProduct(pid);
+            return res.status(200).json({ status: 'ok', data: newProducts });
         } catch (error) {
             console.error('Error al eliminar producto:', error);
             return res.status(500).json({ status: 'error', message: 'Error al eliminar producto.' });

@@ -8,6 +8,7 @@ class CartManager{
         const { currentId, carts } = await this.getCartsFromFile();
         carts.push({ id:`${currentId+1}`, product:[] });
         await this.saveCartToFile(carts,currentId+1);
+        return { id:`${currentId+1}`, product:[] }
     }
     async getCartsFromFile() {
         try {

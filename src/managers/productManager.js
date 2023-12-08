@@ -1,5 +1,5 @@
 const fs = require('fs');
-const path='src/mockDB/productos.json'
+const path = 'src/mockDB/productos.json'
 class ProductManager {
     constructor() {
         this.path = path;
@@ -12,8 +12,8 @@ class ProductManager {
             thumbnail = [],
             code = "",
             stock = 0,
-            status=true,
-            category=""
+            status = true,
+            category = ""
         } = product;
         if (!(title && description && price && status && code && stock && category)) {
             throw new Error("Todos los campos ingresados son obligatorios.");
@@ -24,8 +24,10 @@ class ProductManager {
             throw new Error("El código del producto ya existe.");
         }
 
-        products.push({ id:`${newProductId}`, ...product });
-        await this.saveProductsToFile(products,newProductId);
+        products.push({ id: `${newProductId}`, ...product });
+        await this.saveProductsToFile(products, newProductId);
+
+        return { currentId, products }
     }
     async getProductsFromFile() {
         try {
@@ -36,43 +38,50 @@ class ProductManager {
         }
     }
     async getProducts() {
-        try {
-            const { products } = await this.getProductsFromFile();
-            return products || [];
-        } catch (error) {
-            return [];
-        }
+        const { products } = await this.getProductsFromFile();
+        return products;
     }
 
     async getProductById(id) {
         const { products } = await this.getProductsFromFile();
-        const product=products.find((p) => p.id === id)
-        return product? product : null;
+        const product = products.find((p) => p.id === id)
+        return product ? product : null;
     }
     async updateProduct(id, updatedFields) {
         const { currentId, products } = await this.getProductsFromFile();
         const existingProductIndex = products.findIndex((p) => p.id === id);
-        if (existingProductIndex!==-1) {
+        if (existingProductIndex !== -1) {
             if (updatedFields.id && updatedFields.id !== id) {
                 throw new Error("No se permite modificar el campo 'id' ");
             }
-            products[existingProductIndex] = { ...products[existingProductIndex], ...updatedFields };
+            const updatedProduct = { ...products[existingProductIndex], ...updatedFields };
 
-            await this.saveProductsToFile(products,currentId);
+            const allowedProperties = ['id','title', 'description', 'price', 'thumbnail', 'code', 'stock', 'status', 'category'];
+            const sanitizedProduct = Object.keys(updatedProduct)
+                .filter(key => allowedProperties.includes(key))
+                .reduce((obj, key) => {
+                    obj[key] = updatedProduct[key];
+                    return obj;
+                }, {});
+
+            products[existingProductIndex] = sanitizedProduct;
+            await this.saveProductsToFile(products, currentId);
+            return { currentId, products };
         } else {
-            console.log("Producto no encontrado.");
+            throw new Error("Producto no encontrado.");
         }
     }
     async deleteProduct(id) {
         const { currentId, products } = await this.getProductsFromFile();
         const newProducts = products.filter((p) => parseInt(p.id) !== parseInt(id));
         if (newProducts.length < products.length) {
-            await this.saveProductsToFile(newProducts,currentId);
+            await this.saveProductsToFile(newProducts, currentId);
+            return { currentId, newProducts }
         } else {
-            console.log("Producto no encontrado.");
+            throw new Error("Producto no encontrado.");
         }
     }
-    async saveProductsToFile(products,currentId) {
+    async saveProductsToFile(products, currentId) {
         const data = {
             currentId: currentId,
             products: products,
@@ -86,9 +95,9 @@ class ProductManager {
             const product = products.find((p) => p.id === id);
             return product ? { ...product, quantity } : null;
         });
-    
+
         return details.filter((product) => product !== null);
     }
 }
 
-module.exports=ProductManager;
+module.exports = ProductManager;
