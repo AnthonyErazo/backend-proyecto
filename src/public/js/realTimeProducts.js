@@ -12,11 +12,11 @@ socket.on('newProducts',async (products) => {
             const row = document.createElement('tr')
             row.innerHTML = `
             <td>${product.title}</td>
-            <td>$${product.price}</td>
+            <td>${product.price}</td>
             <td>${product.stock}</td>
             <td>${product.description}</td>
             <td>
-                <button onclick="deleteProduct(${product.id})">Borrar</button>
+                <button onclick="deleteProduct('${product._id}')">Borrar</button>
             </td>
             `
             tableProducts.appendChild(row)

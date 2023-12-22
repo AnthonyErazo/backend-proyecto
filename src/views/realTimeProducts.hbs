@@ -18,7 +18,7 @@
                     <td>{{ this.stock }}</td>
                     <td>{{ this.description }}</td>
                     <td>
-                        <button onclick="deleteProduct({{this.id}})">Borrar</button>
+                        <button onclick="deleteProduct('{{this._id}}')">Borrar</button>
                     </td>
                 </tr>
                 {{/each}}

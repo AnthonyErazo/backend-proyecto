@@ -1,6 +1,6 @@
 const fs = require('fs');
-const path = 'src/mockDB/carrito.json'
-const ProductManager = require('../managers/productManager.js');
+const path = 'src/Memory/mockDB'
+const ProductManager = require('./productManager.js');
 const productsService=new ProductManager();
 class CartManager {
     constructor() {

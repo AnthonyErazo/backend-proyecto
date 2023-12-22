@@ -4,8 +4,8 @@ const appRouter = require('./routes')
 const { Server } = require('socket.io')
 const {connectDb} = require('./config')
 
-const managers = require('./managers')
-const productService = managers.productManager;
+const { ProductMongo } = require('./daos/Mongo/productsDaoMongo');
+const productService = new ProductMongo();
 
 
 const app = express()
@@ -38,18 +38,20 @@ io.on('connection', socket => {
         try {
             await productService.addProduct(data)
             const newProducts = await productService.getProducts()
-            io.emit('newProducts', newProducts)
+            io.emit('newProducts', newProducts.data)
         } catch (error) {
-            throw Error(error);
+            console.error('Error al agregar producto:', error.message);
+            socket.emit('error', { message: 'Error al agregar producto' });
         }
     })
     socket.on('eliminateProduct', async (id) => {
         try {
             await productService.deleteProduct(id)
             const newProducts = await productService.getProducts()
-            io.emit('newProducts', newProducts)
+            io.emit('newProducts', newProducts.data)
         } catch (error) {
-            throw Error(error);
+            console.error('Error al eliminar producto:', error.message);
+            socket.emit('error', { message: 'Error al eliminar producto' });
         }
     })
     socket.on('disconnect', ()=>{
