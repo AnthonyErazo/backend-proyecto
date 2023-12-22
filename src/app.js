@@ -1,15 +1,17 @@
 const express = require('express');
 const handlebars = require('express-handlebars')
 const { Server } = require('socket.io')
-const managers = require('./managers');
+const managers = require('./managers')
+const {connectDb} = require('./config')
 
 const viewsRouter = require('./routes/views.router.js')
-const productsRouter = require('./routes/products.router.js');
-const cartsRouter = require('./routes/carts.router.js');
+const productsRouter = require('./routes/products.router.js')
+const cartsRouter = require('./routes/carts.router.js')
 
-const app = express();
-const PORT = 8080;
+const app = express()
+const PORT = 8080
 
+connectDb()
 const productService = managers.productManager;
 
 app.use(express.json())
