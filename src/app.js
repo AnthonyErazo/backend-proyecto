@@ -33,7 +33,6 @@ const httpServer = app.listen(PORT, err => {
 })
 
 const io = new Server(httpServer)
-let messagesArray = []
 io.on('connection', socket => {
     console.log('Nuevo cliente conectado');
 
@@ -59,6 +58,11 @@ io.on('connection', socket => {
     })
     socket.on('message', async (data) => {
         await messageService.addMessage(data)
+        const messages=await messageService.getMessages()
+        io.emit('messageLogs', messages.data)
+    })
+    socket.on('deleteAllMessages', async () => {
+        await messageService.clearMessages()
         const messages=await messageService.getMessages()
         io.emit('messageLogs', messages.data)
     })

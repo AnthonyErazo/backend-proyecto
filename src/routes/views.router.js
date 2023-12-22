@@ -1,8 +1,10 @@
 const { Router } = require('express')
 const { ProductMongo } = require('../daos/Mongo/productsDaoMongo');
+const { MessageMongo } = require('../daos/Mongo/messagesDaoMongo');
 
 const router = Router()
 const productService = new ProductMongo();
+const messageService = new MessageMongo();
 
 
 router.get('/', async (req,res)=> {
@@ -15,6 +17,7 @@ router.get('/', async (req,res)=> {
 
 router.get('/realtimeproducts',async (req, res) => {
     const {data}=await productService.getProducts();
+    console.log(data)
     res.render('realTimeProducts', {
         title: 'Productos en tiempo real',
         products: data
@@ -22,8 +25,11 @@ router.get('/realtimeproducts',async (req, res) => {
 })
 
 router.get('/chat',async (req, res) => {
+    const {data}=await messageService.getMessages();
+    const chatData = data.map((d) => ({ user: d.user, message: d.message }));
     res.render('chat', {
-        title: 'Chat'
+        title: 'Chat',
+        chatData: chatData
     })
 })
 
