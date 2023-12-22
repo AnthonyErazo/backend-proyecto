@@ -1,4 +1,4 @@
-const { ObjectId } = require("bson");
+const { ObjectId } = require('mongoose').Types;
 const { cartModel } = require("./models/carts.model.js");
 const { ProductMongo } = require('./productsDaoMongo.js');
 
@@ -10,7 +10,8 @@ class CartDaoMongo {
 
     async createNewCart() {
         try {
-            return await this.model.create({});
+            const newCart = await this.model.create({});
+            return { success: true, data: newCart };
         } catch (error) {
             console.error(error);
             return { success: false, message: 'Error al crear un nuevo carrito', error: error.message };

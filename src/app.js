@@ -1,18 +1,17 @@
 const express = require('express');
 const handlebars = require('express-handlebars')
+const appRouter = require('./routes')
 const { Server } = require('socket.io')
-const managers = require('./managers')
 const {connectDb} = require('./config')
 
-const viewsRouter = require('./routes/views.router.js')
-const productsRouter = require('./routes/products.router.js')
-const cartsRouter = require('./routes/carts.router.js')
+const managers = require('./managers')
+const productService = managers.productManager;
+
 
 const app = express()
 const PORT = 8080
 
 connectDb()
-const productService = managers.productManager;
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -24,9 +23,7 @@ app.engine('hbs', handlebars.engine({
 app.set('view engine', 'hbs')
 app.set('views', __dirname + '/views')
 
-app.use('/', viewsRouter)
-app.use('/api/products', productsRouter);
-app.use('/api/carts', cartsRouter);
+app.use(appRouter)
 
 const httpServer = app.listen(PORT, err => {
     if (err) console.log(err)
@@ -58,10 +55,4 @@ io.on('connection', socket => {
     socket.on('disconnect', ()=>{
         console.log('Cliente desconectado');
     })
-})
-
-
-app.use((err, req, res, next) => {
-    console.error(err.stack)
-    res.status(500).send('error de server')
 })
