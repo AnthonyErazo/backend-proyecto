@@ -2,10 +2,12 @@ const express = require('express');
 const handlebars = require('express-handlebars')
 const appRouter = require('./routes')
 const { Server } = require('socket.io')
-const {connectDb} = require('./config')
+const { connectDb } = require('./config')
 
 const { ProductMongo } = require('./daos/Mongo/productsDaoMongo');
 const productService = new ProductMongo();
+const { MessageMongo } = require('./daos/Mongo/messagesDaoMongo');
+const messageService = new MessageMongo();
 
 
 const app = express()
@@ -31,6 +33,7 @@ const httpServer = app.listen(PORT, err => {
 })
 
 const io = new Server(httpServer)
+let messagesArray = []
 io.on('connection', socket => {
     console.log('Nuevo cliente conectado');
 
@@ -54,7 +57,12 @@ io.on('connection', socket => {
             socket.emit('error', { message: 'Error al eliminar producto' });
         }
     })
-    socket.on('disconnect', ()=>{
+    socket.on('message', async (data) => {
+        await messageService.addMessage(data)
+        const messages=await messageService.getMessages()
+        io.emit('messageLogs', messages.data)
+    })
+    socket.on('disconnect', () => {
         console.log('Cliente desconectado');
     })
 })
