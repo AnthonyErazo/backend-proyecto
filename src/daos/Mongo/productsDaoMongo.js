@@ -48,7 +48,7 @@ class ProductDaoMongo {
         } = product;
     
         try {
-            if (!(title && description && price && status && code && stock && category)) {
+            if (!(title && description && price && code && stock && category)) {
                 return { success: false, message: "Todos los campos ingresados son obligatorios." };
             }
             const newProduct = await this.model.create(product);

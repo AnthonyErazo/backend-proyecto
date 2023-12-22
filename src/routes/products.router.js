@@ -4,6 +4,10 @@ const {ProductMongo}=require('../daos/Mongo/productsDaoMongo');
 const router = Router();
 const productsService =  new ProductMongo();
 
+function formatResponse(data) {
+    return JSON.stringify(data, null, 2);
+}
+
 router
     .get('/', async (req, res) => {
         try {
@@ -47,7 +51,7 @@ router
             if(newProducts.success){
                 return res.status(200).json(newProducts);
             }else{
-                return res.status(500).json(newProducts);
+                return res.status(404).json(newProducts);
             }
             
         } catch (error) {

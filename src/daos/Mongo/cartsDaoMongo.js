@@ -26,7 +26,8 @@ class CartDaoMongo {
                 const productQuantities = cart.product.map(({ id, quantity }) => ({ id, quantity }));
                 const details = await this.productDao.getProductsDetails(productQuantities);
 
-                const cartCopy = { ...cart, product: details.data };
+                const cartCopy = cart;
+                cartCopy.product=details.data;
                 return { success: true, data: cartCopy };
             } else {
                 return { success: false, message: 'Carrito no encontrado' };
@@ -53,15 +54,18 @@ class CartDaoMongo {
 
             const existingProductIndex = cart.product.findIndex((p) => p.id.toString() === pid);
 
-            if (existingProductIndex !== -1) {
-                cart.product[existingProductIndex].quantity += 1;
-            } else {
-                cart.product.push({ id: pid, quantity: 1 });
-            }
+        if (existingProductIndex !== -1) {
+            cart.product[existingProductIndex].quantity ++;
+        } else {
+            cart.product.push({ id: pid, quantity: 1 });
+        }
 
-            await cart.save();
+        await this.model.updateOne(
+            { _id: new ObjectId(cid) },
+            { $set: { product: cart.product } }
+        );
 
-            return { success: true, data: cart, message: 'Producto añadido al carrito correctamente' };
+        return { success: true, data: cart, message: 'Producto añadido al carrito correctamente' };
         } catch (error) {
             console.error(error);
             return { success: false, message: 'Error al procesar la solicitud' };
