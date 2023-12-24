@@ -17,7 +17,7 @@ class MessageDaoMongo {
 
     async getMessages() {
         try {
-            const messages = await this.model.find({});
+            const messages = await this.model.find({}).lean();
             return { success: true, data: messages };
         } catch (error) {
             console.error(error);

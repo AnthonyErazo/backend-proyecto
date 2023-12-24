@@ -26,10 +26,9 @@ router.get('/realtimeproducts',async (req, res) => {
 
 router.get('/chat',async (req, res) => {
     const {data}=await messageService.getMessages();
-    const chatData = data.map((d) => ({ user: d.user, message: d.message }));
     res.render('chat', {
         title: 'Chat',
-        chatData: chatData
+        chatData: data
     })
 })
 

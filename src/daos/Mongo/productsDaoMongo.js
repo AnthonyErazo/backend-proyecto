@@ -23,7 +23,7 @@ class ProductDaoMongo {
 
     async getProductById(pid) {
         try {
-            const product = await this.model.findOne({ _id: new ObjectId(pid) });
+            const product = await this.model.findOne({ _id: new ObjectId(pid) }).lean();
 
             if (product) {
                 return { success: true, data: product };
@@ -66,7 +66,7 @@ class ProductDaoMongo {
 
             if (existingProduct) {
                 if (updatedFields.id && updatedFields.id !== pid.toString()) {
-                    throw new Error("No se permite modificar el campo 'id'");
+                    return { success: false, message: "No se permite modificar el campo 'id'" };
                 }
                 const allowedProperties = ['id', 'title', 'description', 'price', 'thumbnail', 'code', 'stock', 'status', 'category'];
 

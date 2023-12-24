@@ -2,14 +2,14 @@ const { Router } = require('express')
 const productRouter = require('./products.router.js')
 const cartRouter = require('./carts.router.js')
 const viewsRouter = require('./views.router.js')
-// const { uploader } = require('../utils/upoloader.js')
+const { uploader } = require('../utils/uploader.js')
 
 const router = Router();
 
-// router.post('/uploader', uploader.single('myFile'), (req, res)=>{
+router.post('/uploader', uploader.single('myFile'), (req, res)=>{
 
-//     res.send('Imagen subida')
-// })
+    res.send('Imagen subida')
+})
 
 router.use('/', viewsRouter);
 router.use('/api/products', productRouter);
