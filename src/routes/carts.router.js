@@ -37,12 +37,7 @@ router
             const{cid,pid}=req.params;
             const newCart=await cartsService.addProductByCartId(cid,pid);
             if(newCart.success){
-                let dataCart = await cartsService.getProductsByCartId(cid);
-                if(dataCart.success){
-                    return res.status(200).json(dataCart);
-                }else{
                     return res.status(200).json(newCart);
-                }
             }else{
                 return res.status(404).json(newCart);
             }

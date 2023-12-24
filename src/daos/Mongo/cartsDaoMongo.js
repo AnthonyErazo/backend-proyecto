@@ -1,11 +1,9 @@
 const { ObjectId } = require('mongoose').Types;
 const { cartModel } = require("./models/carts.model.js");
-const { ProductMongo } = require('./productsDaoMongo.js');
 
 class CartDaoMongo {
     constructor() {
         this.model = cartModel;
-        this.productDao = new ProductMongo();
     }
 
     async createNewCart() {
@@ -23,12 +21,7 @@ class CartDaoMongo {
             const cart = await this.model.findOne({ _id: new ObjectId(cid) });
 
             if (cart) {
-                const productQuantities = cart.product.map(({ id, quantity }) => ({ id, quantity }));
-                const details = await this.productDao.getProductsDetails(productQuantities);
-
-                const cartCopy = cart;
-                cartCopy.product=details.data;
-                return { success: true, data: cartCopy };
+                return { success: true, data: cart };
             } else {
                 return { success: false, message: 'Carrito no encontrado' };
             }
@@ -46,23 +39,16 @@ class CartDaoMongo {
                 return { success: false, message: "Carrito no encontrado." };
             }
 
-            const product = await this.productDao.getProductById(pid);
-
-            if (!product.success) {
-                return { success: false, message: product.message };
-            }
-
-            const existingProductIndex = cart.product.findIndex((p) => p.id.toString() === pid);
-
-        if (existingProductIndex !== -1) {
-            cart.product[existingProductIndex].quantity ++;
+            const existingProduct = cart.products.find(p => p.product.equals(pid));
+        if (existingProduct) {
+            existingProduct.quantity++;
         } else {
-            cart.product.push({ id: pid, quantity: 1 });
+            cart.products.push({ product: pid, quantity: 1 });
         }
 
         await this.model.updateOne(
             { _id: new ObjectId(cid) },
-            { $set: { product: cart.product } }
+            { $set: { products: cart.products } }
         );
 
         return { success: true, data: cart, message: 'Producto añadido al carrito correctamente' };
@@ -79,15 +65,10 @@ class CartDaoMongo {
                 return { success: false, message: "Carrito no encontrado." };
             }
 
-            const product = await this.productDao.getProductById(pid);
-            if (!product.success) {
-                return { success: false, message: product.message };
-            }
-
-            const existingProductIndex = cart.product.findIndex((p) => p.id.toString() === pid);
+            const existingProductIndex = cart.products.findIndex((p) => p.product.equals(pid));
 
             if (existingProductIndex !== -1) {
-                cart.product.splice(existingProductIndex, 1);
+                cart.products.splice(existingProductIndex, 1);
 
                 await cart.save();
                 return { success: true, data: cart, message: 'Producto eliminado del carrito correctamente' };

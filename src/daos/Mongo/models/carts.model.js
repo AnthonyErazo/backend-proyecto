@@ -1,8 +1,20 @@
 const { Schema, model } = require('mongoose');
 
 const cartSchema = new Schema({
-    product: { type: Array, default: [] },
+    products: { type: [
+        {
+            product:{
+                type:Schema.Types.ObjectId,
+                ref:'products'
+            },
+            quantity:{type:Number}
+        }
+    ] },
 });
+
+cartSchema.pre('findOne',function () {
+    this.populate('products.product')
+})
 
 const cartModel = model('carts', cartSchema);
 

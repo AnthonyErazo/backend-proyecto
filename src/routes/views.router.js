@@ -17,7 +17,6 @@ router.get('/', async (req,res)=> {
 
 router.get('/realtimeproducts',async (req, res) => {
     const {data}=await productService.getProducts();
-    console.log(data)
     res.render('realTimeProducts', {
         title: 'Productos en tiempo real',
         products: data
