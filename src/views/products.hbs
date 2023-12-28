@@ -1,0 +1,22 @@
+<h1>Bienvenidos a {{title}}</h1>
+
+<div>
+    {{#each payload}}
+    <li>
+        <strong>Name: </strong>{{this.title}}
+        <strong>Price: </strong>{{this.price}}
+        <a href="/products/{{this._id}}" class="btn btn-outline-dark">Más detalles</a>
+        <button class="addToCartBtn" data-product-id="{{this._id}}">Agregar al carrito</button>
+    </li>
+    {{/each}}
+</div>
+<div class="text-center">
+    {{#if hasPrevPage}}
+        <a href="{{prevLink}}" class="btn btn-outline-dark">Anterior</a>
+    {{/if}}
+    <label>{{page}}</label>
+    {{#if hasNextPage}}
+        <a href="{{nextLink}}" class="btn btn-outline-dark">Siguiente</a>
+    {{/if}}
+</div>
+<script src="/js/addProductCart.js"></script>

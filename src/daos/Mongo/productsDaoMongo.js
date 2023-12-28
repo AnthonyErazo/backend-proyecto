@@ -6,18 +6,47 @@ class ProductDaoMongo {
         this.model = productModel;
     }
 
-    async getProducts() {
+    async getProducts(limit=10, page=1, sort, query) {
         try {
-            const products = await this.model.find({}).lean();
+            const options = {
+                limit: parseInt(limit),
+                page: parseInt(page),
+                lean: true,
+            };
 
-            if (products.length > 0) {
-                return { success: true, data: products };
+            if (sort) {
+                const parsedSort = parseInt(sort);
+                if (![1, -1].includes(parsedSort)) {
+                    return { success: false, message: 'El parámetro sort debe ser 1 o -1' };
+                }
+                options.sort = { price: parsedSort };
+            }
+
+            let parsedQuery = {};
+            if (query) {
+                try {
+                    parsedQuery = JSON.parse(query);
+                } catch (error) {
+                    return { status: "error", message: 'Error al analizar el parámetro de consulta JSON' };
+                }
+            }
+
+            const { docs: payload, ...rest } = await this.model.paginate(parsedQuery, options);
+
+            if (payload.length > 0) {
+                return {
+                    status: "success",
+                    payload,
+                    ...rest,
+                    prevLink: rest.hasPrevPage ? `/products?limit=${limit}&page=${rest.prevPage}` : null,
+                    nextLink: rest.hasNextPage ? `/products?limit=${limit}&page=${rest.nextPage}` : null,
+                };
             } else {
-                return { success: false, message: 'No hay productos disponibles' };
+                return { status: "error", message: 'No hay productos disponibles' };
             }
         } catch (error) {
             console.error(error);
-            return { success: false, message: 'Error al obtener los productos', error: error.message  };
+            return { status: "error", message: 'Error al obtener los productos', error: error.message };
         }
     };
 
@@ -26,13 +55,13 @@ class ProductDaoMongo {
             const product = await this.model.findOne({ _id: new ObjectId(pid) }).lean();
 
             if (product) {
-                return { success: true, data: product };
+                return { status: "success", payload: product };
             } else {
-                return { success: false, message: 'Producto no encontrado' };
+                return { status: "error", message: 'Producto no encontrado' };
             }
         } catch (error) {
             console.error(error);
-            return { success: false, message: 'Error al obtener el producto', error: error.message  };
+            return { status: "error", message: 'Error al obtener el producto', error: error.message };
         }
     };
     async addProduct(product) {
@@ -46,17 +75,17 @@ class ProductDaoMongo {
             status = true,
             category = ""
         } = product;
-    
+
         try {
             if (!(title && description && price && code && stock && category)) {
-                return { success: false, message: "Todos los campos ingresados son obligatorios." };
+                return { status: "error", message: "Todos los campos ingresados son obligatorios." };
             }
             const newProduct = await this.model.create(product);
-    
-            return { success: true, data: newProduct };
+
+            return { status: "success", payload: newProduct };
         } catch (error) {
             console.error(error);
-            return { success: false, message: 'Error al agregar el producto', error: error.message };
+            return { status: "error", message: 'Error al agregar el producto', error: error.message };
         }
     };
 
@@ -66,7 +95,7 @@ class ProductDaoMongo {
 
             if (existingProduct) {
                 if (updatedFields.id && updatedFields.id !== pid.toString()) {
-                    return { success: false, message: "No se permite modificar el campo 'id'" };
+                    return { sstatus: "error", message: "No se permite modificar el campo 'id'" };
                 }
                 const allowedProperties = ['id', 'title', 'description', 'price', 'thumbnail', 'code', 'stock', 'status', 'category'];
 
@@ -79,59 +108,39 @@ class ProductDaoMongo {
                 const result = await this.model.updateOne({ _id: new ObjectId(pid) }, sanitizedProduct);
 
                 if (result.nModified > 0) {
-                    return { success: true, message: 'Producto actualizado correctamente' };
+                    return { status: "success", message: 'Producto actualizado correctamente' };
                 } else {
-                    return { success: false, message: 'Ningún cambio realizado en el producto' };
+                    return { status: "error", message: 'Ningún cambio realizado en el producto' };
                 }
             } else {
-                return { success: false, message: 'Producto no encontrado' };
+                return { status: "error", message: 'Producto no encontrado' };
             }
         } catch (error) {
             console.error(error);
-            return { success: false, message: 'Error al actualizar el producto', error: error.message  };
+            return { status: "error", message: 'Error al actualizar el producto', error: error.message };
         };
     };
 
     async deleteProduct(pid) {
         try {
             const existingProduct = await this.model.findOne({ _id: new ObjectId(pid) });
-    
+
             if (existingProduct) {
                 const result = await this.model.deleteOne({ _id: new ObjectId(pid) });
-    
+
                 if (result.deletedCount > 0) {
-                    return { success: true, message: 'Producto eliminado correctamente' };
+                    return { status: "success", message: 'Producto eliminado correctamente' };
                 } else {
-                    return { success: false, message: 'Ningún producto eliminado' };
+                    return { status: "error", message: 'Ningún producto eliminado' };
                 }
             } else {
-                return { success: false, message: 'Producto no encontrado' };
+                return { status: "error", message: 'Producto no encontrado' };
             }
         } catch (error) {
             console.error(error);
-            return { success: false, message: 'Error al eliminar el producto', error: error.message  };
+            return { status: "error", message: 'Error al eliminar el producto', error: error.message };
         }
     }
-    
-
-    async getProductsDetails(productQuantities) {
-        try {
-            const productIds = productQuantities.map(({ id }) => new ObjectId(id));
-    
-            const products = await this.model.find({ _id: { $in: productIds } }).lean();
-    
-            const details = productQuantities.map(({ id, quantity }) => {
-                const product = products.find((p) => p._id.toString() === id);
-                return product ? { ...product, quantity } : null;
-            });
-    
-            return { success: true, data: details.filter((product) => product !== null) };
-        } catch (error) {
-            console.error(error);
-            return { success: false, message: 'Error al obtener detalles de productos', error: error.message };
-        }
-    }
-    
 }
 
 exports.ProductMongo = ProductDaoMongo;

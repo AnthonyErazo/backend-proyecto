@@ -1,0 +1,13 @@
+<h1>Bienvenidos a {{title}}</h1>
+
+<div>
+    {{#each cartProducts}}
+    <li>
+        <strong>Name: </strong>{{this.product.title}} - 
+        <strong>Description: </strong>{{this.product.description}} - 
+        <strong>Price: </strong>{{this.product.price}} - 
+        <strong>Stock: </strong>{{this.product.stock}} -
+        <strong>Quantity: </strong>{{this.quantity}}
+    </li>
+    {{/each}}
+</div>
