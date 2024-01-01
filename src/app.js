@@ -20,7 +20,9 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static(__dirname + '/public'))
 
 app.engine('hbs', handlebars.engine({
-    extname: '.hbs'
+    extname: '.hbs',
+    allowProtoPropertiesByDefault:true,
+    allowProtoMethodsByDefault:true,
 }))
 app.set('view engine', 'hbs')
 app.set('views', __dirname + '/views')
