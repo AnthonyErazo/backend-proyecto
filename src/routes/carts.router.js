@@ -1,79 +1,82 @@
 const { Router } = require('express');
-const {CartMongo}=require('../daos/Mongo/cartsDaoMongo');
+const { cartsService, productsService } = require('../daos/Mongo');
 
 const router = Router();
-const cartsService = new CartMongo();
 
 router
-    .get('/:cid',async (req,res)=>{
+    .get('/:cid', async (req, res) => {
         try {
-            const {cid}=req.params;
+            const { cid } = req.params;
             let dataCart = await cartsService.getProductsByCartId(cid);
             return res.status(200).json(dataCart);
         } catch (error) {
             console.error('Error al obtener productos del carrito:', error);
-            return res.status(500).json({ status: 'error', message: 'Error al obtener productos del carrito.' });
+            return res.status(500).json({ status: 'error', message: 'Error al obtener productos del carrito.', error: error.message });
         }
     })
-    .post('/',async (req,res)=>{
+    .post('/', async (req, res) => {
         try {
-            const newCart=await cartsService.createNewCart();
+            const newCart = await cartsService.createNewCart();
             return res.status(200).json(newCart);
         } catch (error) {
             console.error('Error al crear carrito:', error);
-            return res.status(500).json({ status: 'error', message: 'Error al crear carrito.' });
+            return res.status(500).json({ status: 'error', message: 'Error al crear carrito.', error: error.message });
         }
     })
-    .post('/:cid/product/:pid',async (req,res)=>{
+    .post('/:cid/product/:pid', async (req, res) => {
         try {
-            const{cid,pid}=req.params;
-            const newCart=await cartsService.addProductByCartId(cid,pid);
+            const { cid, pid } = req.params;
+            await productsService.getProductById(pid);
+            const newCart = await cartsService.addProductByCartId(cid, pid);
             return res.status(200).json(newCart);
         } catch (error) {
             console.error('Error al agregar producto al carrito:', error);
-            return res.status(500).json({ status: 'error', message: 'Error al agregar producto al carrito.' });
+            return res.status(500).json({ status: 'error', message: 'Error al agregar producto al carrito.', error: error.message });
         }
     })
-    .delete('/:cid/products/:pid',async (req,res)=>{
+    .delete('/:cid/products/:pid', async (req, res) => {
         try {
-            const{cid,pid}=req.params;
-            const newCart=await cartsService.removeProductByCartId(cid,pid);
+            const { cid, pid } = req.params;
+            const newCart = await cartsService.removeProductByCartId(cid, pid);
             return res.status(200).json(newCart);
         } catch (error) {
             console.error('Error al agregar producto al carrito:', error);
-            return res.status(500).json({ status: 'error', message: 'Error al agregar producto al carrito.' });
+            return res.status(500).json({ status: 'error', message: 'Error al agregar producto al carrito.', error: error.message });
         }
     })
-    .put('/:cid',async (req,res)=>{
+    .put('/:cid', async (req, res) => {
         try {
-            const updatedProducts=req.body;
-            const{cid}=req.params;
-            const newCart=await cartsService.updateProductsInCart(cid,updatedProducts);
+            const updatedProducts = req.body;
+            const { cid } = req.params;
+            for (const productId of updatedProducts) {
+                await productsService.getProductById(productId.product)
+            }
+            const newCart = await cartsService.updateProductsInCart(cid, updatedProducts);
             return res.status(200).json(newCart);
         } catch (error) {
             console.error('Error al agregar producto al carrito:', error);
-            return res.status(500).json({ status: 'error', message: 'Error al agregar producto al carrito.' });
+            return res.status(500).json({ status: 'error', message: 'Error al agregar producto al carrito.', error: error.message });
         }
     })
-    .put('/:cid/products/:pid',async (req,res)=>{
+    .put('/:cid/products/:pid', async (req, res) => {
         try {
-            const newQuantity=req.body;
-            const{cid,pid}=req.params;
-            const newCart=await cartsService.updateProductQuantity(cid,pid,newQuantity);
+            const newQuantity = req.body;
+            const { cid, pid } = req.params;
+            const newCart = await cartsService.updateProductQuantity(cid, pid, newQuantity);
             return res.status(200).json(newCart);
         } catch (error) {
             console.error('Error al agregar producto al carrito:', error);
-            return res.status(500).json({ status: 'error', message: 'Error al agregar producto al carrito.' });
+            return res.status(500).json({ status: 'error', message: 'Error al agregar producto al carrito.', error: error.message });
         }
     })
-    .delete('/:cid',async (req,res)=>{
+    .delete('/:cid', async (req, res) => {
         try {
-            const{cid}=req.params;
-            const newCart=await cartsService.removeAllProductsByCartId(cid);
+            const { cid } = req.params;
+            const newCart = await cartsService.removeAllProductsByCartId(cid);
             return res.status(200).json(newCart);
         } catch (error) {
             console.error('Error al agregar producto al carrito:', error);
-            return res.status(500).json({ status: 'error', message: 'Error al agregar producto al carrito.' });
-        } 
+            return res.status(500).json({ status: 'error', message: 'Error al agregar producto al carrito.', error: error.message });
+        }
     })
-module.exports=router;
+module.exports = router;

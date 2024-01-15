@@ -1,12 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{title}}</title>
 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
 </head>
+
 <body>
-    {{{ body }}}
+  <header>
+    {{#if userName}}
+    <div class="title">
+      <div>
+        <a href="/user" class="userName">Bienvenido {{userName}}</a>
+        <p class="userRole">{{userRole}}</p>
+        <a href="/logOut">log out</a>
+      </div>
+    </div>
+    <nav class="nav">
+      <div class="navDiv">
+        <ul>
+          <li> <a href="/home">Inicio</a></li>
+          <li> <a href="/products">Productos</a></li>
+          <li> <a href="/realTimeProducts">Tiempo Real</a></li>
+          <li> <a href="/chat">Chat</a></li>
+        </ul>
+      </div>
+    </nav>
+    {{/if}}
+  </header>
+
+  {{{body}}}
 </body>
+
 </html>

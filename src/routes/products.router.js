@@ -1,8 +1,7 @@
 const { Router } = require('express');
-const {ProductMongo}=require('../daos/Mongo/productsDaoMongo');
+const {productsService}=require('../daos/Mongo');
 
 const router = Router();
-const productsService =  new ProductMongo();
 
 router
     .get('/', async (req, res) => {
@@ -12,7 +11,7 @@ router
             return res.status(200).json(dataProducts);
         } catch (error) {
             console.error('Error al obtener productos:', error);
-            return res.status(500).json({ status: 'error', message: 'Error interno del servidor' });
+            return res.status(500).json({ status: 'error', message: 'Error interno del servidor', error:error.message });
         }
 
     })
@@ -23,7 +22,7 @@ router
             return res.status(200).json(dataProducts);
         } catch (error) {
             console.error('Error al obtener producto.', error);
-            return res.status(500).json({ status: 'error', message: 'Error al obtener producto.' });
+            return res.status(500).json({ status: 'error', message: 'Error al obtener producto.', error:error.message });
         }
     })
     .post('/', async (req, res) => {
@@ -33,7 +32,7 @@ router
             return res.status(200).json(newProducts);
         } catch (error) {
             console.error('Error al insertar producto:', error);
-            return res.status(500).json({ status: 'error', message: 'Error al insertar producto.' });
+            return res.status(500).json({ status: 'error', message: 'Error al insertar producto.', error:error.message });
         }
     })
     .put('/:pid', async (req, res) => {
@@ -44,7 +43,7 @@ router
             return res.status(200).json(newProducts);
         } catch (error) {
             console.error('Error al modificar producto:', error);
-            return res.status(500).json({ status: 'error', message: 'Error al modificar producto.' });
+            return res.status(500).json({ status: 'error', message: 'Error al modificar producto.', error:error.message });
         }
     })
     .delete('/:pid', async (req, res) => {
@@ -54,7 +53,7 @@ router
             return res.status(200).json(newProducts);
         } catch (error) {
             console.error('Error al eliminar producto:', error);
-            return res.status(500).json({ status: 'error', message: 'Error al eliminar producto.' });
+            return res.status(500).json({ status: 'error', message: 'Error al eliminar producto.', error:error.messageb });
         }
     })
 

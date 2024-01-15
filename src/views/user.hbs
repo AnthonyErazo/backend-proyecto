@@ -1,0 +1,45 @@
+<main>
+  <section class="userContainer">
+    <div>
+      <h3 class="title">Perfil de Usuario</h3>
+      <ul class="listUser">
+        <li>
+          <p><strong>Nombre: </strong>{{first_name}}</p>
+        </li>
+        {{#if last_name}}
+        <li>
+          <p><strong>Apellido: </strong>{{last_name}}</p>
+        </li>
+        {{/if}}
+        <li>
+          <p><strong>Email: </strong>{{email}}</p>
+        </li>
+      </ul>
+    </div>
+    {{#if users}}
+    <div>
+      <h3 class="title">Usuarios registrados:</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Nombres</th>
+            <th>Apellido</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each users}}
+          {{#excludeCurrentUser ../email this.email}}
+          <tr>
+            <td>{{ this.first_name }}</td>
+            <td>{{ this.last_name }}</td>
+            <td>{{ this.email }}</td>
+          </tr>
+          {{/excludeCurrentUser}}
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+    {{/if}}
+  </section>
+</main>

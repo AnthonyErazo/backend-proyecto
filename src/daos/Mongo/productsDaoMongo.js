@@ -17,7 +17,7 @@ class ProductDaoMongo {
         if (sort) {
             const parsedSort = parseInt(sort);
             if (![1, -1].includes(parsedSort)) {
-                return { success: false, message: 'El parámetro sort debe ser 1 o -1' };
+                throw new Error('El parámetro sort debe ser 1 o -1');
             }
             options.sort = { price: parsedSort };
         }
@@ -27,7 +27,7 @@ class ProductDaoMongo {
             try {
                 parsedQuery = JSON.parse(query);
             } catch (error) {
-                return { status: "error", message: 'Error al analizar el parámetro de consulta JSON' };
+                throw new Error('Error al analizar el parámetro de consulta JSON');
             }
         }
 
@@ -42,7 +42,7 @@ class ProductDaoMongo {
                 nextLink: rest.hasNextPage ? `/products?limit=${limit}&page=${rest.nextPage}` : null,
             };
         } else {
-            return { status: "error", message: 'No hay productos disponibles' };
+            throw new Error('No hay productos disponibles');
         }
     };
 
@@ -52,7 +52,7 @@ class ProductDaoMongo {
         if (product) {
             return { status: "success", payload: product };
         } else {
-            return { status: "error", message: 'Producto no encontrado' };
+            throw new Error(`Producto con ID:${pid} no encontrado`)
         }
 
     };
@@ -69,7 +69,7 @@ class ProductDaoMongo {
         } = product;
 
         if (!(title && description && price && code && stock && category)) {
-            return { status: "error", message: "Todos los campos ingresados son obligatorios." };
+            throw new Error("Todos los campos ingresados son obligatorios.")
         }
         const newProduct = await this.model.create(product);
 
@@ -83,7 +83,7 @@ class ProductDaoMongo {
 
         if (existingProduct) {
             if (updatedFields.id && updatedFields.id !== pid.toString()) {
-                return { sstatus: "error", message: "No se permite modificar el campo 'id'" };
+                throw new Error("No se permite modificar el campo 'id'")
             }
             const allowedProperties = ['id', 'title', 'description', 'price', 'thumbnail', 'code', 'stock', 'status', 'category'];
 
@@ -98,10 +98,10 @@ class ProductDaoMongo {
             if (result.nModified > 0) {
                 return { status: "success", message: 'Producto actualizado correctamente' };
             } else {
-                return { status: "error", message: 'Ningún cambio realizado en el producto' };
+                throw new Error('Ningún cambio realizado en el producto')
             }
         } else {
-            return { status: "error", message: 'Producto no encontrado' };
+            throw new Error('Producto no encontrado')
         }
 
     };
@@ -115,10 +115,10 @@ class ProductDaoMongo {
             if (result.deletedCount > 0) {
                 return { status: "success", message: 'Producto eliminado correctamente' };
             } else {
-                return { status: "error", message: 'Ningún producto eliminado' };
+                throw new Error('Ningún producto eliminado')
             }
         } else {
-            return { status: "error", message: 'Producto no encontrado' };
+            throw new Error('Producto no encontrado')
         }
 
     }

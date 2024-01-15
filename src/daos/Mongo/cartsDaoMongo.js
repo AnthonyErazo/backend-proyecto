@@ -17,7 +17,7 @@ class CartDaoMongo {
         if (cart) {
             return { success: true, data: cart };
         } else {
-            return { success: false, message: 'Carrito no encontrado' };
+            throw new Error('Carrito no encontrado')
         }
     }
 
@@ -36,7 +36,7 @@ class CartDaoMongo {
             );
 
             if (!newCart) {
-                return { success: false, message: "Carrito no encontrado." };
+                throw new Error("Carrito no encontrado.")
             }
 
             return { success: true, data: newCart, message: 'Producto añadido al carrito correctamente' };
@@ -53,7 +53,7 @@ class CartDaoMongo {
         if (result.modifiedCount > 0) {
             return { success: true, result, message: 'Producto eliminado del carrito correctamente' };
         } else {
-            return { success: false, result, message: 'El producto no está en el carrito' };
+            throw new Error('El producto no está en el carrito')
         }
     }
 
@@ -66,7 +66,7 @@ class CartDaoMongo {
         if (result.modifiedCount > 0) {
             return { success: true, message: 'Todos los productos fueron eliminados del carrito correctamente' };
         } else {
-            return { success: false, message: 'El carrito no contiene productos' };
+            throw new Error('El carrito no contiene productos')
         }
     }
 
@@ -78,7 +78,7 @@ class CartDaoMongo {
         );
 
         if (!cart) {
-            return { success: false, message: 'Carrito no encontrado o producto no está en el carrito.' };
+            throw new Error('Carrito no encontrado o producto no está en el carrito.')
         }
 
         return { success: true, data: cart, message: 'Cantidad del producto actualizada correctamente' };
@@ -88,7 +88,7 @@ class CartDaoMongo {
         let updatedCart = await this.model.findById(cid);
 
         if (!updatedCart) {
-            return { success: false, message: 'Carrito no encontrado.' };
+            throw new Error('Carrito no encontrado.')
         }
 
         for (const { product, quantity } of updatedProducts) {
