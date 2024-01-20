@@ -3,6 +3,8 @@ const handlebars = require('express-handlebars')
 const appRouter = require('./routes')
 const { Server } = require('socket.io')
 const { connectDb, sessionsMdb } = require('./config')
+const passport = require('passport')
+const { initializePassport } = require('./config/passport.config.js')
 
 const { ProductMongo } = require('./daos/Mongo/productsDaoMongo');
 const productService = new ProductMongo();
@@ -20,6 +22,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static(__dirname + '/public'))
 app.use(cookieParser('p@l@br@seCret@'))
 
+
 app.engine('hbs', handlebars.engine({
     extname: '.hbs',
     allowProtoPropertiesByDefault:true,
@@ -28,8 +31,10 @@ app.engine('hbs', handlebars.engine({
 app.set('view engine', 'hbs')
 app.set('views', __dirname + '/views')
 
+initializePassport()
 connectDb()
 sessionsMdb(app)
+app.use(passport.initialize())
 
 app.use(appRouter)
 

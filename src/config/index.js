@@ -12,11 +12,11 @@ const MongoStore = require('connect-mongo');
 exports.sessionsMdb = (app) => {
     app.use(
         session({
-            store: MongoStore.create({
-                mongoUrl: 'mongodb+srv://anthonyerazo76:anthonyerazo76@cluster0.gzll4u2.mongodb.net/ecommerce?retryWrites=true&w=majority',
-                ttl: 3000,
-            }),
-            secret: 'anthony202203',
+            // store: MongoStore.create({
+            //     mongoUrl: 'mongodb+srv://anthonyerazo76:anthonyerazo76@cluster0.gzll4u2.mongodb.net/ecommerce?retryWrites=true&w=majority',
+            //     ttl: 3000,
+            // }),
+            secret: 'p@l@br@seCret@',
             resave: true,
             saveUninitialized: true,
         })

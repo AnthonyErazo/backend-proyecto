@@ -32,7 +32,7 @@ class UserDaoMongo {
         return await this.model.findOne({ _id: uid })
     }
     async getUserByMail(uemail) {
-        return await this.model.findOne({ email: uemail })
+        return await this.model.findOne({ email: uemail }).lean();
     }
     async createUser(newUser) {
         return await this.model.create(newUser)

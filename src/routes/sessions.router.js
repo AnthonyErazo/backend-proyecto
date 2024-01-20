@@ -1,5 +1,8 @@
 const { Router } = require('express');
 const { usersService } = require('../daos/Mongo');
+const { createHash, isValidPassword } = require('../utils/hashPassword')
+const passport = require('passport')
+const { createToken, authenticationToken } = require('../utils/jwt')
 
 const router = Router();
 
@@ -37,7 +40,14 @@ router
 
             if (userFound) throw new CustomError(`Ya existe un usuario con ese email, pruebe con otro`)
 
-            await usersService.createUser(userData)
+            const newUser = {
+                first_name: userData.first_name,
+                last_name: userData.last_name,
+                email: userData.email,
+                password: createHash(userData.password),
+            };
+    
+            await usersService.createUser(newUser);
 
             res.render('login', {
                 title: 'Login',
@@ -67,11 +77,13 @@ router
                 };
                 return res.redirect('/products');
             }
-    
+
             const userFound = await usersService.getUserByMail(userData.email);
-    
-            if (!userFound || userData.password !== userFound.password) throw new CustomError(`Email o contraseña equivocado`);
-    
+
+            if (!isValidPassword(userData.password, { password: userFound.password })) throw new CustomError(`Email o contraseña equivocado`);
+
+            const token = createToken({id: userFound._id, role: userFound.role })
+            console.log(token)
             req.session.user = {
                 user: userFound._id,
                 first_name: userFound.first_name,
@@ -94,6 +106,12 @@ router
                 });
             }
         }
+    })
+    .get('/github', passport.authenticate('github', { scope: ['user:email'] }), async (req, res) => { 
+    })
+    .get('/githubcallback', passport.authenticate('github', { failureRedirect: '/login' }), (req, res) => {
+        req.session.user = req.user
+        res.redirect('/')
     })
     .get('/logout', (req, res) => {
         req.session.destroy((err) => {
