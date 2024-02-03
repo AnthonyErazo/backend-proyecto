@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { usersService } = require('../daos/Mongo');
+const { usersService, cartsService } = require('../daos/Mongo');
 const { createHash, isValidPassword } = require('../utils/hashPassword')
 const passport = require('passport')
 const { createToken, authenticationToken } = require('../utils/jwt')
@@ -33,20 +33,23 @@ const validateFields = (fields, requiredFields) => {
 router
     .post('/register', async (req, res) => {
         try {
-            const requieredfield = ['first_name', 'last_name', 'email', 'password'];
+            const requieredfield = ['first_name', 'last_name', 'email', 'birthdate', 'password'];
             const userData = validateFields(req.body, requieredfield);
 
-            const userFound = await usersService.getUserByMail(userData.email);
+            const userFound = await usersService.userExists({ email: userData.email });
 
             if (userFound) throw new CustomError(`Ya existe un usuario con ese email, pruebe con otro`)
 
+            const cart = await cartsService.createNewCart();
             const newUser = {
                 first_name: userData.first_name,
                 last_name: userData.last_name,
+                birthdate: userData.birthdate,
                 email: userData.email,
                 password: createHash(userData.password),
+                cart: cart.data._id,
             };
-    
+
             await usersService.createUser(newUser);
 
             res.render('login', {
@@ -78,20 +81,25 @@ router
                 return res.redirect('/products');
             }
 
-            const userFound = await usersService.getUserByMail(userData.email);
+            const userFound = await usersService.getUser({ email: userData.email });
 
-            if (!isValidPassword(userData.password, { password: userFound.password })) throw new CustomError(`Email o contraseña equivocado`);
+            if (!userFound || !isValidPassword(userData.password, { password: userFound.password })) throw new CustomError(`Email o contraseña equivocado`);
 
-            const token = createToken({id: userFound._id, role: userFound.role })
-            console.log(token)
-            req.session.user = {
-                user: userFound._id,
-                first_name: userFound.first_name,
-                last_name: userFound.last_name,
-                email: userFound.email,
-                role: userFound.role,
-            };
+            const token = createToken({ id: userFound._id, role: userFound.role })
+            res.cookie('token', token, {
+                maxAge: 60 * 60 * 1000 * 24,
+                httpOnly: true
+            })
             res.redirect('/products');
+            // res.sendTokenCookieSuccess(token,"Log In exitoso con Id: "+userFound._id)
+            // req.session.user = {
+            //     user: userFound._id,
+            //     first_name: userFound.first_name,
+            //     last_name: userFound.last_name,
+            //     email: userFound.email,
+            //     role: userFound.role,
+            // };
+            // res.redirect('/products');
         } catch (error) {
             console.error(error);
             if (error instanceof CustomError) {
@@ -107,7 +115,7 @@ router
             }
         }
     })
-    .get('/github', passport.authenticate('github', { scope: ['user:email'] }), async (req, res) => { 
+    .get('/github', passport.authenticate('github', { scope: ['user:email'] }), async (req, res) => {
     })
     .get('/githubcallback', passport.authenticate('github', { failureRedirect: '/login' }), (req, res) => {
         req.session.user = req.user
@@ -118,6 +126,9 @@ router
             if (err) return res.send({ status: 'error', error: err });
         });
         res.redirect('/');
+    })
+    .get('/current', (req, res) => {
+        res.send('datos sensibles')
     });
 
 module.exports = router;

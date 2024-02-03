@@ -1,4 +1,5 @@
 const handlebars = require('handlebars');
+const passport = require('passport');
 const { Router } = require('express')
 const { productsService,messageService,cartsService,usersService } = require('../daos/Mongo')
 const { authentication } = require('../middleware/auth.middleware');
@@ -59,7 +60,7 @@ router.get('/chat', async (req, res) => {
     })
 })
 
-router.get('/products', authentication, async (req, res) => {
+router.get('/products', passport.authenticate('jwt', { session: false, failureRedirect:"/" }), async (req, res) => {
     const { page = 1, limit = 10, sort, query } = req.query
     const { payload, hasPrevPage, hasNextPage, prevLink, nextLink, ...rest } = await productsService.getProducts(limit, page, sort, query);
     res.render('products', {

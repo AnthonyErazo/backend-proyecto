@@ -28,12 +28,15 @@ class UserDaoMongo {
     async getUsers() {
         return await this.model.find({}).select('-password').lean();
     }
-    async getUserById(uid) {
-        return await this.model.findOne({ _id: uid })
+    async getUser(data) {
+        return await this.model.findOne(data).lean();
     }
-    async getUserByMail(uemail) {
-        return await this.model.findOne({ email: uemail }).lean();
+    async userExists(data) {
+        return await this.model.exists(data).lean(); 
     }
+    // async getUserByMail(uemail) {
+    //     return await this.model.findOne({ email: uemail }).lean();
+    // }
     async createUser(newUser) {
         return await this.model.create(newUser)
     }

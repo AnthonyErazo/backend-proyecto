@@ -5,8 +5,15 @@ const usersSchema = Schema({
     first_name: { type: String, required: true },
     last_name: String,
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    birthdate:{type:Date},
+    password: String ,
+    cart:{type:Schema.Types.ObjectId,ref:'carts'},
     role: { type: String, default: "user" }
+})
+
+
+usersSchema.pre('find',function () {
+    this.populate('cart')
 })
 
 usersSchema.plugin(mongososePaginate)
