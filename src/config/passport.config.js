@@ -1,6 +1,7 @@
 const passport = require('passport')
 const passport_jwt = require('passport-jwt')
 const GithubStrategy = require('passport-github2')
+const { usersService, cartsService } = require('../daos/Mongo')
 
 const JWTStrategy = passport_jwt.Strategy
 const ExtractJWT = passport_jwt.ExtractJwt
@@ -35,9 +36,11 @@ exports.initializePassport = () => {
         try {
             let user = await usersService.getUser({ email: !profile._json.email ? profile.emails[0].value : profile._json.email })
             if (!user) {
+                const cart=await cartsService.createNewCart();
                 let userNew = {
                     first_name: profile.username,
-                    email: !profile._json.email ? profile.emails[0].value : profile._json.email
+                    email: !profile._json.email ? profile.emails[0].value : profile._json.email,
+                    cart:cart.data._id
                 }
                 let result = await usersService.createUser(userNew)
                 return done(null, result)
@@ -53,7 +56,7 @@ exports.initializePassport = () => {
         done(null, user._id)
     })
     passport.deserializeUser(async (id, done) => {
-        let user = await usersService.geUser({ _id: id })
+        let user = await usersService.getUser({ _id: id })
         done(null, user)
     })
 

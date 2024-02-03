@@ -60,7 +60,7 @@ router.get('/chat', async (req, res) => {
     })
 })
 
-router.get('/products', passport.authenticate('jwt',{ session: false }), async (req, res) => {
+router.get('/products', passport.authenticate('jwt',{ session: false,failureRedirect: "/" }), async (req, res) => {
     const {id,role} = req.user
     const {cart,first_name}=await usersService.getUser({_id:id});
     const { page = 1, limit = 10, sort, query } = req.query
@@ -120,7 +120,7 @@ router.post('/addToCart', async (req, res) => {
     const {cart}=await usersService.getUser({_id:id})
     const idCart = cart
     const addProductCart = await cartsService.addProductByCartId(idCart, productId);
-    res.sendStatus(200);
+    res.status(200).json(addProductCart);
 });
 
 router.get('/user',authentication, async (req, res) => {

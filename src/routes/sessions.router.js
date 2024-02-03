@@ -107,10 +107,20 @@ router
         }
     })
     .get('/github', passport.authenticate('github', { scope: ['user:email'] }), async (req, res) => {
+        console.log('first')
     })
-    .get('/githubcallback', passport.authenticate('github', { failureRedirect: '/login' }), (req, res) => {
-        req.session.user = req.user
-        res.redirect('/')
+    .get('/githubcallback', passport.authenticate('github', { session: false, failureRedirect: '/' }), (req, res) => {
+        try {
+            const user = req.user;
+
+            const token = createToken({id:user._id,role:user.role});
+
+            res.cookie('token', token);
+
+            res.redirect("/");
+        } catch (error) {
+            console.log(error);
+        }
     })
     .get('/logout', (req, res) => {
         req.session.destroy((err) => {
@@ -118,8 +128,15 @@ router
         });
         res.redirect('/');
     })
-    .get('/current', (req, res) => {
-        res.send('datos sensibles')
+    .get('/current', passport.authenticate("jwt", {
+        session: false,
+        failureRedirect: "/",
+    }), async (req, res) => {
+        try {
+            res.send('datos sensibles')
+        } catch (error) {
+            console.log(error);
+        }
     });
 
 module.exports = router;

@@ -2,11 +2,12 @@
 
 <div>
     {{#each payload}}
-    <li>
+    <li style="position: relative;">
         <strong>Name: </strong>{{this.title}}
         <strong>Price: </strong>{{this.price}}
         <a href="/products/{{this._id}}" class="btn btn-outline-dark">Más detalles</a>
         <button class="addToCartBtn" data-product-id="{{this._id}}">Agregar al carrito</button>
+        <p id="addCorrectMsg{{this._id}}" style="display: none;position:absolute;right:10vh;top:-20px;">Agregado correctamente</p>
     </li>
     {{/each}}
 </div>
