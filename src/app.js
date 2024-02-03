@@ -3,25 +3,49 @@ const handlebars = require('express-handlebars')
 const appRouter = require('./routes')
 const { Server } = require('socket.io')
 const { connectDb, sessionsMdb } = require('./config')
+const cookieParser = require('cookie-parser')
 const passport = require('passport')
 const { initializePassport } = require('./config/passport.config.js')
 
 const { ProductMongo } = require('./daos/Mongo/productsDaoMongo');
 const productService = new ProductMongo();
 const { MessageMongo } = require('./daos/Mongo/messagesDaoMongo');
+const { usersService } = require('./daos/Mongo/index.js');
 const messageService = new MessageMongo();
 
-const cookieParser = require('cookie-parser')
 
 const app = express()
 const PORT = 8080
 
 
+connectDb()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static(__dirname + '/public'))
 app.use(cookieParser('p@l@br@seCret@'))
 
+sessionsMdb(app)
+
+initializePassport()
+app.use(passport.initialize())
+
+app.use(async (req, res, next) => {
+    try {
+        if (req.cookies.token) {
+            passport.authenticate('jwt', { session: false }, (err, user) => {
+                if (err || !user) {
+                    return next(err);
+                }
+                res.locals.currentUser = user;
+                next();
+            })(req, res, next);
+        } else {
+            next();
+        }
+    } catch (error) {
+        next(error);
+    }
+});
 
 app.engine('hbs', handlebars.engine({
     extname: '.hbs',
@@ -31,10 +55,6 @@ app.engine('hbs', handlebars.engine({
 app.set('view engine', 'hbs')
 app.set('views', __dirname + '/views')
 
-initializePassport()
-connectDb()
-sessionsMdb(app)
-app.use(passport.initialize())
 
 app.use(appRouter)
 

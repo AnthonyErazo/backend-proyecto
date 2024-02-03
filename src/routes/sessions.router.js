@@ -91,15 +91,6 @@ router
                 httpOnly: true
             })
             res.redirect('/products');
-            // res.sendTokenCookieSuccess(token,"Log In exitoso con Id: "+userFound._id)
-            // req.session.user = {
-            //     user: userFound._id,
-            //     first_name: userFound.first_name,
-            //     last_name: userFound.last_name,
-            //     email: userFound.email,
-            //     role: userFound.role,
-            // };
-            // res.redirect('/products');
         } catch (error) {
             console.error(error);
             if (error instanceof CustomError) {

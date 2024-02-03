@@ -34,9 +34,6 @@ class UserDaoMongo {
     async userExists(data) {
         return await this.model.exists(data).lean(); 
     }
-    // async getUserByMail(uemail) {
-    //     return await this.model.findOne({ email: uemail }).lean();
-    // }
     async createUser(newUser) {
         return await this.model.create(newUser)
     }

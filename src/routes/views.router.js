@@ -7,7 +7,7 @@ const { authentication } = require('../middleware/auth.middleware');
 const router = Router()
 
 router.get('/', async (req, res) => {
-    if (req.session?.user) {
+    if (req.cookies.token) {
         res.redirect('/products');
     } else {
         res.render('login', {
@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/register', async (req, res) => {
-    if (req.session?.user) {
+    if (req.cookies.token) {
         res.redirect('/products');
     } else {
         res.render('register', {
@@ -26,7 +26,7 @@ router.get('/register', async (req, res) => {
     }
 });
 router.get('/logout', (req, res) => {
-    delete req.session.user;
+    res.clearCookie('token');
     res.redirect('/');
 });
 
@@ -60,19 +60,22 @@ router.get('/chat', async (req, res) => {
     })
 })
 
-router.get('/products', passport.authenticate('jwt', { session: false, failureRedirect:"/" }), async (req, res) => {
+router.get('/products', passport.authenticate('jwt',{ session: false }), async (req, res) => {
+    const {id,role} = req.user
+    const {cart,first_name}=await usersService.getUser({_id:id});
     const { page = 1, limit = 10, sort, query } = req.query
     const { payload, hasPrevPage, hasNextPage, prevLink, nextLink, ...rest } = await productsService.getProducts(limit, page, sort, query);
     res.render('products', {
         title: 'Products',
-        userName: req.session?.user?.first_name,
-        userRole: req.session?.user?.role,
+        userName: first_name,
+        userRole: role,
         payload,
         hasPrevPage,
         hasNextPage,
         prevLink,
         nextLink,
-        page: rest.page
+        page: rest.page,
+        cart
     })
 })
 
@@ -89,12 +92,15 @@ router.get('/products/:productId', async (req, res) => {
 
 router.get('/carts/:cid', async (req, res) => {
     const { cid } = req.params
+    const {id}=res.locals.currentUser;
+    const {first_name,role,cart}=await usersService.getUser({_id:id})
     const { data } = await cartsService.getProductsByCartId(cid);
     res.render('carts', {
         title: 'Cart',
         cartProducts: data.products,
-        userName: req.session?.user?.first_name,
-        userRole: req.session?.user?.role,
+        userName: first_name,
+        userRole: role,
+        cart
     })
 })
 
@@ -110,7 +116,9 @@ handlebars.registerHelper('excludeCurrentUser', function (currentEmail, userEmai
 
 router.post('/addToCart', async (req, res) => {
     const { productId } = req.body;
-    const idCart = "65888604f15942beaa30a427"
+    const {id}=res.locals.currentUser;
+    const {cart}=await usersService.getUser({_id:id})
+    const idCart = cart
     const addProductCart = await cartsService.addProductByCartId(idCart, productId);
     res.sendStatus(200);
 });
