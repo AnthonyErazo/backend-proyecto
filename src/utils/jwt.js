@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken')
-const JWT_PRIVATE_KEY = "secretword"
+const { configObject } = require('../config')
+
+const JWT_PRIVATE_KEY = configObject.Jwt_private_key
 
 const createToken = user => jwt.sign(user, JWT_PRIVATE_KEY, {expiresIn: '1d'})
 

@@ -2,27 +2,29 @@ const express = require('express');
 const handlebars = require('express-handlebars')
 const appRouter = require('./routes')
 const { Server } = require('socket.io')
-const { connectDb, sessionsMdb } = require('./config')
+const { connectDb, sessionsMdb, configObject } = require('./config')
 const cookieParser = require('cookie-parser')
 const passport = require('passport')
 const { initializePassport } = require('./config/passport.config.js')
 
-const { ProductMongo } = require('./daos/Mongo/productsDaoMongo');
-const productService = new ProductMongo();
-const { MessageMongo } = require('./daos/Mongo/messagesDaoMongo');
-const { usersService } = require('./daos/Mongo/index.js');
-const messageService = new MessageMongo();
+const { ProductMongo } = require('./daos/Mongo/productsDaoMongo')
+const productService = new ProductMongo()
+const { MessageMongo } = require('./daos/Mongo/messagesDaoMongo')
+const messageService = new MessageMongo()
+
+const cors=require('cors')
 
 
 const app = express()
-const PORT = 8080
+const PORT = configObject.PORT
 
 
 connectDb()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static(__dirname + '/public'))
-app.use(cookieParser('p@l@br@seCret@'))
+app.use(cookieParser(configObject.Cookie_word_secret))
+app.use(cors())
 
 sessionsMdb(app)
 

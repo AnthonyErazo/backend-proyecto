@@ -2,6 +2,7 @@ const passport = require('passport')
 const passport_jwt = require('passport-jwt')
 const GithubStrategy = require('passport-github2')
 const { usersService, cartsService } = require('../daos/Mongo')
+const { configObject } = require('.')
 
 const JWTStrategy = passport_jwt.Strategy
 const ExtractJWT = passport_jwt.ExtractJwt
@@ -11,14 +12,14 @@ exports.initializePassport = () => {
     const cookieExtractor = req => {
         let token = null
         if (req && req.cookies) {
-            token = req.cookies['token']
+            token = req.cookies[configObject.Cookie_auth]
         }
         return token
     }
 
     passport.use('jwt', new JWTStrategy({
         jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
-        secretOrKey: 'secretword'
+        secretOrKey: configObject.Jwt_private_key
     }, async (jwt_payload, done) => {
         try {
             return done(null, jwt_payload)
@@ -28,9 +29,9 @@ exports.initializePassport = () => {
     }))
 
     passport.use('github', new GithubStrategy({
-        clientID: 'Iv1.e7d6f54064887e25',
-        clientSecret: 'ddb3814b2a5324be76b1a89f122f51f6730774f2',
-        callbackURL: 'http://localhost:8080/api/sessions/githubcallback',
+        clientID: configObject.Github_client_Id,
+        clientSecret: configObject.Github_client_Secret,
+        callbackURL: configObject.Github_callback_Url,
         scope: ['user:email'],
     }, async (accesToken, refreshToken, profile, done) => {
         try {
