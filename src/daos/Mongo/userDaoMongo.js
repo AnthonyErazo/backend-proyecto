@@ -1,22 +1,27 @@
 const { usersModel } = require('./models/user.model.js');
+const { ObjectId } = require('mongoose').Types;
 
 class UserDaoMongo {
     constructor() {
         this.model = usersModel;
     }
-    async getUsersPaginate(limit = 10, page = 1) {
+    async get(limit = -1, page = 1,filter = {}) {
         const options = {
             limit: parseInt(limit),
             page: parseInt(page),
             lean: true,
         };
 
-        const { docs: payload, ...rest } = await this.model.paginate({}, options);
+        const { docs: payload, ...rest } = await this.model.paginate(filter, options);
 
         if (payload.length > 0) {
+            const payloadWithoutPassword = payload.map(user => {
+                const { password, ...userWithoutPassword } = user;
+                return userWithoutPassword;
+            });
             return {
                 status: "success",
-                payload,
+                payload:payloadWithoutPassword,
                 ...rest,
                 prevLink: rest.hasPrevPage ? `/user?limit=${limit}&page=${rest.prevPage}` : null,
                 nextLink: rest.hasNextPage ? `/user?limit=${limit}&page=${rest.nextPage}` : null,
@@ -25,23 +30,52 @@ class UserDaoMongo {
             throw new Error('No hay usuarios disponibles');
         }
     }
-    async getUsers() {
-        return await this.model.find({}).select('-password').lean();
+    async getBy(filter) {
+        const user= await this.model.findOne(filter).lean();
+        if (user) {
+            return { status: "success", payload: user };
+        } else {
+            throw new Error(`Usuario no encontrado`)
+        }
     }
-    async getUser(data) {
-        return await this.model.findOne(data).lean();
+    async exists(filter) {
+        return await this.model.exists(filter).lean(); 
     }
-    async userExists(data) {
-        return await this.model.exists(data).lean(); 
-    }
-    async createUser(newUser) {
+    async create(newUser) {
         return await this.model.create(newUser)
     }
-    async updateUser(uid) {
-        return await this.model.findOneAndUpdate({ _id: uid }, userUpdate).lean()
+    async update(uid,userUpdate) {
+        const existingUser = await this.model.findOne({ _id: new ObjectId(uid) });
+
+        if (existingUser) {
+            if (userUpdate.id && userUpdate.id !== uid.toString()) {
+                throw new Error("No se permite modificar el campo 'id'")
+            }
+            const allowedProperties = ['first_name', 'last_name', 'email', 'birthdate', 'password', 'role'];
+
+            const sanitizedUser = Object.keys(userUpdate)
+                .filter(key => allowedProperties.includes(key))
+                .reduce((obj, key) => {
+                    obj[key] = userUpdate[key];
+                    return obj;
+                }, {});
+            const result = await this.model.updateOne({ _id: new ObjectId(uid) }, sanitizedUser);
+            if (result.modifiedCount > 0) {
+                return { status: "success", message: 'Usuario actualizado correctamente' };
+            } else {
+                throw new Error('Ningún cambio realizado en el Usuario')
+            }
+        } else {
+            throw new Error('Usuario no encontrado')
+        }
     }
-    async deleteUser(uid) {
-        return await this.model.findOneAndDelete({ _id: uid })
+    async delete(uid) {
+        const UserDelete = await this.model.findOneAndDelete({ _id: uid }).lean()
+        if (UserDelete) {
+            return { status: "success", message: 'Usuario eliminado correctamente', payload:UserDelete }
+        } else {
+            throw new Error('Usuario no encontrado')
+        }
     }
 }
 

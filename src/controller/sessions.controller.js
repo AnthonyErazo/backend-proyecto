@@ -1,7 +1,7 @@
 const { configObject } = require("../config");
-const { usersService, cartsService } = require("../daos/Mongo");
+const { userService,cartsService }=require('../repositories')
 const CustomError = require("../utils/errors");
-const { createHash } = require("../utils/hashPassword");
+const { createHash, isValidPassword } = require("../utils/hashPassword");
 const { createToken } = require("../utils/jwt");
 const validateFields = require("../utils/validators");
 
@@ -13,7 +13,7 @@ class SessionsController{
             const requieredfield = ['first_name', 'last_name', 'email', 'birthdate', 'password'];
             const userData = validateFields(req.body, requieredfield);
 
-            const userFound = await usersService.userExists({ email: userData.email });
+            const userFound = await userService.existsUser({ email: userData.email });
 
             if (userFound) throw new CustomError(`Ya existe un usuario con ese email, pruebe con otro`)
 
@@ -27,7 +27,7 @@ class SessionsController{
                 cart: cart.data._id,
             };
 
-            await usersService.createUser(newUser);
+            await userService.createUser(newUser);
 
             res.render('login', {
                 title: 'Login',
@@ -58,7 +58,7 @@ class SessionsController{
                 return res.redirect('/products');
             }
 
-            const userFound = await usersService.getUser({ email: userData.email });
+            const {payload:userFound} = await userService.getUser({ email: userData.email });
 
             if (!userFound || !isValidPassword(userData.password, { password: userFound.password })) throw new CustomError(`Email o contraseña equivocado`);
 

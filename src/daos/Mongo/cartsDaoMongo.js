@@ -6,12 +6,12 @@ class CartDaoMongo {
         this.model = cartModel;
     }
 
-    async createNewCart() {
+    async create() {
         const newCart = await this.model.create({});
         return { success: true, data: newCart };
     }
 
-    async getProductsByCartId(cid) {
+    async getProductsBy(cid) {
         const cart = await this.model.findOne({ _id: new ObjectId(cid) }).lean();
 
         if (cart) {
@@ -21,7 +21,7 @@ class CartDaoMongo {
         }
     }
 
-    async addProductByCartId(cid, pid) {
+    async addProductBy(cid, pid) {
         const cart = await this.model.findOneAndUpdate(
             { _id: new ObjectId(cid), "products.product": new ObjectId(pid) },
             { $inc: { "products.$.quantity": 1 } },
@@ -45,7 +45,7 @@ class CartDaoMongo {
         return { success: true, data: cart, message: 'Producto añadido al carrito correctamente' };
     }
 
-    async removeProductByCartId(cid, pid) {
+    async removeProductBy(cid, pid) {
         const result = await this.model.updateOne(
             { _id: new ObjectId(cid) },
             { $pull: { products: { product: new ObjectId(pid) } } }
@@ -57,7 +57,7 @@ class CartDaoMongo {
         }
     }
 
-    async removeAllProductsByCartId(cid) {
+    async removeAllProductsBy(cid) {
         const result = await this.model.updateOne(
             { _id: new ObjectId(cid) },
             { $set: { products: [] } }
@@ -91,21 +91,28 @@ class CartDaoMongo {
             throw new Error('Carrito no encontrado.')
         }
 
-        for (const { product, quantity } of updatedProducts) {
-            updatedCart = await this.model.findOneAndUpdate(
-                { _id: updatedCart._id, "products.product": new ObjectId(product) },
-                { $set: { "products.$.quantity": quantity } },
-                { new: true }
-            );
+        // for (const { product, quantity } of updatedProducts) {
+        //     updatedCart = await this.model.findOneAndUpdate(
+        //         { _id: updatedCart._id, "products.product": new ObjectId(product) },
+        //         { $set: { "products.$.quantity": quantity } },
+        //         { new: true }
+        //     );
 
-            if (!updatedCart) {
-                updatedCart = await this.model.findByIdAndUpdate(
-                    cid,
-                    { $addToSet: { products: { product: new ObjectId(product), quantity } } },
-                    { new: true }
-                );
-            }
+        //     if (!updatedCart) {
+        //         updatedCart = await this.model.findByIdAndUpdate(
+        //             cid,
+        //             { $addToSet: { products: { product: new ObjectId(product), quantity } } },
+        //             { new: true }
+        //         );
+        //     }
+        // }
+        updatedCart.products = [];
+
+        for (const { product, quantity } of updatedProducts) {
+            updatedCart.products.push({ product: new ObjectId(product), quantity });
         }
+    
+        updatedCart = await updatedCart.save();
 
         return { success: true, data: updatedCart, message: 'Productos en el carrito actualizados correctamente' };
     }

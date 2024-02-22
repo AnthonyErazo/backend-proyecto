@@ -1,5 +1,5 @@
 const { configObject } = require("../config");
-const { productsService, messageService, usersService, cartsService } = require("../daos/Mongo");
+const { productsService,messageService,userService,cartsService }=require('../repositories')
 
 class ViewsController{
     constructor(){
@@ -55,7 +55,8 @@ class ViewsController{
     }
     productsView=  async (req, res) => {
         const {id,role} = req.user
-        const {cart,first_name}=await usersService.getUser({_id:id});
+        const { payload:dataUser }=await userService.getUser({_id:id});
+        const {cart,first_name}=dataUser
         const { page = 1, limit = 10, sort, query } = req.query
         const { payload, hasPrevPage, hasNextPage, prevLink, nextLink, ...rest } = await productsService.getProducts(limit, page, sort, query);
         res.render('products', {
@@ -74,15 +75,15 @@ class ViewsController{
     addToCart=  async (req, res) => {
         const { productId } = req.body;
         const {id}=res.locals.currentUser;
-        const {cart}=await usersService.getUser({_id:id})
-        const idCart = cart
+        const {payload:cart}=await userService.getUser({_id:id})
+        const idCart = cart.cart
         const addProductCart = await cartsService.addProductByCartId(idCart, productId);
         res.status(200).json(addProductCart);
     }
     user=  async (req, res) => {
         let users = []
         if (req.session?.user?.role === 'admin') {
-            users = await usersService.getUsers()
+            users = await userService.getUsers()
         }
         res.render('user', {
             title: 'Usuario',
@@ -96,7 +97,7 @@ class ViewsController{
     }
     productDetail= async (req, res) => {
         const { productId } = req.params;
-        const product = await productsService.getProductById(productId);
+        const product = await productsService.getProduct({_id:productId});
         res.render('productDetails', {
             title: 'Detalles del Producto',
             product: product.payload,
@@ -107,7 +108,7 @@ class ViewsController{
     cartDetail=  async (req, res) => {
         const { cid } = req.params
         const {id}=res.locals.currentUser;
-        const {first_name,role,cart}=await usersService.getUser({_id:id})
+        const {first_name,role,cart}=await userService.getUser({_id:id})
         const { data } = await cartsService.getProductsByCartId(cid);
         res.render('carts', {
             title: 'Cart',

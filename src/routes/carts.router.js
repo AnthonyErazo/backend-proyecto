@@ -8,7 +8,8 @@ const {
     removeProductByCartId,
     updateProductsInCart,
     updateProductQuantity,
-    removeAllProductsByCartId
+    removeAllProductsByCartId,
+    purchaseCart
 } = new CartsController()
 
 const router = Router();
@@ -21,4 +22,5 @@ router
     .put('/:cid', updateProductsInCart)
     .put('/:cid/products/:pid', updateProductQuantity)
     .delete('/:cid', removeAllProductsByCartId)
+    .post('/:cid/purchase',purchaseCart)
 module.exports = router;

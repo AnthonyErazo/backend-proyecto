@@ -6,7 +6,7 @@ class ProductDaoMongo {
         this.model = productModel;
     }
 
-    async getProducts(limit = 10, page = 1, sort, query) {
+    async get(limit = 10, page = 1, sort, query) {
 
         const options = {
             limit: parseInt(limit),
@@ -46,17 +46,17 @@ class ProductDaoMongo {
         }
     };
 
-    async getProductById(pid) {
-        const product = await this.model.findOne({ _id: new ObjectId(pid) }).lean();
+    async getBy(filter) {
+        const product = await this.model.findOne(filter).lean();
 
         if (product) {
             return { status: "success", payload: product };
         } else {
-            throw new Error(`Producto con ID:${pid} no encontrado`)
+            throw new Error(`Producto no encontrado`)
         }
 
     };
-    async addProduct(product) {
+    async create(product) {
         const {
             title = "",
             description = "",
@@ -77,7 +77,7 @@ class ProductDaoMongo {
 
     };
 
-    async updateProduct(pid, updatedFields) {
+    async update(pid, updatedFields) {
 
         const existingProduct = await this.model.findOne({ _id: new ObjectId(pid) });
 
@@ -85,7 +85,7 @@ class ProductDaoMongo {
             if (updatedFields.id && updatedFields.id !== pid.toString()) {
                 throw new Error("No se permite modificar el campo 'id'")
             }
-            const allowedProperties = ['id', 'title', 'description', 'price', 'thumbnail', 'code', 'stock', 'status', 'category'];
+            const allowedProperties = ['title', 'description', 'price', 'thumbnail', 'code', 'stock', 'status', 'category'];
 
             const sanitizedProduct = Object.keys(updatedFields)
                 .filter(key => allowedProperties.includes(key))
@@ -94,8 +94,7 @@ class ProductDaoMongo {
                     return obj;
                 }, {});
             const result = await this.model.updateOne({ _id: new ObjectId(pid) }, sanitizedProduct);
-
-            if (result.nModified > 0) {
+            if (result.modifiedCount > 0) {
                 return { status: "success", message: 'Producto actualizado correctamente' };
             } else {
                 throw new Error('Ningún cambio realizado en el producto')
@@ -106,17 +105,10 @@ class ProductDaoMongo {
 
     };
 
-    async deleteProduct(pid) {
-        const existingProduct = await this.model.findOne({ _id: new ObjectId(pid) });
-
-        if (existingProduct) {
-            const result = await this.model.deleteOne({ _id: new ObjectId(pid) });
-
-            if (result.deletedCount > 0) {
-                return { status: "success", message: 'Producto eliminado correctamente' };
-            } else {
-                throw new Error('Ningún producto eliminado')
-            }
+    async delete(pid) {
+        const ProductDelete = await this.model.findOneAndDelete({ _id: pid }).lean()
+        if (ProductDelete) {
+            return { status: "success", message: 'Producto eliminado correctamente', payload:ProductDelete }
         } else {
             throw new Error('Producto no encontrado')
         }

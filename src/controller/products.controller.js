@@ -1,4 +1,4 @@
-const {productsService}=require('../daos/Mongo');
+const { productsService }=require('../repositories')
 
 class ProductsController{
     constructor(){
@@ -11,13 +11,13 @@ class ProductsController{
             return res.status(200).json(dataProducts);
         } catch (error) {
             console.error('Error al obtener productos:', error);
-            return res.status(500).json({ status: 'error', message: 'Error interno del servidor', error:error.message });
+            return res.status(500).json({ status: 'error', message: 'Error al obtener productos', error:error.message });
         }
     }
     getProductById=async (req, res) => {
         try {
             const { pid } = req.params;
-            let dataProducts = await this.service.getProductById(pid);
+            let dataProducts = await this.service.getProduct({_id:pid});
             return res.status(200).json(dataProducts);
         } catch (error) {
             console.error('Error al obtener producto.', error);
@@ -27,7 +27,7 @@ class ProductsController{
     addProduct=async (req, res) => {
         try {
             const product = req.body;
-            newProducts=await this.service.addProduct(product);
+            newProducts=await this.service.createProduct(product);
             return res.status(200).json(newProducts);
         } catch (error) {
             console.error('Error al insertar producto:', error);

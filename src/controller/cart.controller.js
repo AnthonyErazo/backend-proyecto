@@ -1,4 +1,4 @@
-const { cartsService, productsService } = require('../daos/Mongo');
+const { productsService, cartsService, ticketService }=require('../repositories')
 
 class CartsController{
     constructor(){
@@ -26,7 +26,7 @@ class CartsController{
     addProductByCartId= async (req, res) => {
         try {
             const { cid, pid } = req.params;
-            await productsService.getProductById(pid);
+            await productsService.getProduct({_id:pid});
             const newCart = await this.service.addProductByCartId(cid, pid);
             return res.status(200).json(newCart);
         } catch (error) {
@@ -49,7 +49,7 @@ class CartsController{
             const updatedProducts = req.body;
             const { cid } = req.params;
             for (const productId of updatedProducts) {
-                await productsService.getProductById(productId.product)
+                await productsService.getBy({_id:productId.product})
             }
             const newCart = await this.service.updateProductsInCart(cid, updatedProducts);
             return res.status(200).json(newCart);
@@ -79,5 +79,18 @@ class CartsController{
             return res.status(500).json({ status: 'error', message: 'Error al agregar producto al carrito.', error: error.message });
         }
     }
+    purchaseCart=async (req,res)=>{
+        try {
+            const { cid } = req.params;
+            const cartResponse = await this.service.getProductsByCartId(cid);
+            const ticket = await ticketService.createTicket(cartResponse);
+            await this.service.updateProductsInCart(cid, ticket.productsNotProcessed);
+            return res.status(200).json(ticket);
+        } catch (error) {
+            console.error('Error al finalizar la compra:', error);
+            return res.status(500).json({ status: 'error', message: 'Error al finalizar la compra', error: error.message });
+        }
+    }
 }
+
 module.exports = CartsController
