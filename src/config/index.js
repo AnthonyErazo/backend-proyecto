@@ -16,6 +16,8 @@ exports.configObject={
     Cookie_auth:process.env.Cookie_auth,
     Admin_user_email:process.env.Admin_user_email,
     Admin_user_password:process.env.Admin_user_password,
+    Gmail_user_app:process.env.Gmail_user_app,
+    Gmail_pass_app:process.env.Gmail_pass_app
 }
 
 exports.connectDb = async () => {
