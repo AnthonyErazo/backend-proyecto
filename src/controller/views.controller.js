@@ -92,18 +92,21 @@ class ViewsController{
         res.status(200).json(addProductCart);
     }
     user=  async (req, res) => {
-        let users = []
-        if (req.session?.user?.role === 'admin') {
-            users = await userService.getUsers()
+        const user=await dataUser(req,res)
+        let users=[]
+        if (user.role === 'admin') {
+            const {payload} = await userService.getUsers()
+            users=payload
         }
         res.render('user', {
             title: 'Usuario',
             users: users,
-            userName: req.session?.user?.first_name,
-            first_name: req.session?.user?.first_name,
-            last_name: req.session?.user?.last_name,
-            email: req.session?.user?.email,
-            userRole: req.session?.user?.role
+            userName: user?.first_name,
+            first_name: user?.first_name,
+            last_name: user?.last_name,
+            email: user?.email,
+            userRole: user?.role,
+            cart:user?.cart
         });
     }
     productDetail= async (req, res) => {

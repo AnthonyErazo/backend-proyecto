@@ -41,7 +41,7 @@ router
     .get('/carts/:cid',authentication,isUser, cartDetail)
     .get('/carts/', authentication, isUser, cartDetail)
     .post('/addToCart',authentication,isUser, addToCart)
-    .get('/user', isAdmin, user)
+    .get('/user',authentication, user)
     .get('*', (req, res) => {
         res.redirect('/products');
     });

@@ -5,7 +5,7 @@ class UserDaoMongo {
     constructor() {
         this.model = usersModel;
     }
-    async get(limit = -1, page = 1,filter = {}) {
+    async get(limit = 10, page = 1,filter = {}) {
         const options = {
             limit: parseInt(limit),
             page: parseInt(page),
