@@ -35,8 +35,9 @@ exports.initializePassport = () => {
         scope: ['user:email'],
     }, async (accesToken, refreshToken, profile, done) => {
         try {
-            let user = await userService.getUser({ email: !profile._json.email ? profile.emails[0].value : profile._json.email }, false)
-            if (!user) {
+
+            let userExist = await userService.existsUser({ email: !profile._json.email ? profile.emails[0].value : profile._json.email })
+            if (!userExist) {
                 const cart = await cartsService.createNewCart();
                 let userNew = {
                     first_name: profile.username,
@@ -45,8 +46,10 @@ exports.initializePassport = () => {
                 }
                 let result = await userService.createUser(userNew)
                 return done(null, result)
+            }else{
+                let user = await userService.existsUser({ email: !profile._json.email ? profile.emails[0].value : profile._json.email },false)
+                return done(null, user)
             }
-            done(null, user)
 
         } catch (error) {
             return done(error)
