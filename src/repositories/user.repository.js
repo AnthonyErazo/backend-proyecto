@@ -4,7 +4,7 @@ class UserRepository {
     }
 
     getUsers   = async (limit,page,filter) => await this.dao.get(limit,page,filter)
-    getUser    = async (filter) => await this.dao.getBy(filter)
+    getUser    = async (filter,notPassword) => await this.dao.getBy(filter,notPassword)
     existsUser = async (filter) => await this.dao.exists(filter)
     createUser = async (newUser) => await this.dao.create(newUser)
     updateUser = async (uid, userUpdate) => await this.dao.update(uid, userUpdate)

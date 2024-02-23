@@ -1,6 +1,7 @@
 const { ObjectId } = require('mongoose').Types;
 const { ticketModel } = require('./models/ticket.model')
 const { productModel } = require('./models/products.model')
+const { usersModel } = require('./models/user.model')
 
 function generateUniqueCode() {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -16,6 +17,7 @@ class TicketDaoMongo {
     constructor() {
         this.model = ticketModel
         this.modelProduct=productModel
+        this.modelUser=usersModel
     }
 
     async get(limit = -1, page = 1) {
@@ -73,11 +75,12 @@ class TicketDaoMongo {
         if(totalPrice==0){
             throw Error("No se pudo completar la compra, verificar stock");
         }
+        const {email} = await this.modelUser.findOne({cart:CartData._id}).select('-password');
         const ticketData = {
             code: generateUniqueCode(),
             purchase_datetime: new Date(),
             amount: totalPrice,
-            purchaser: 'email@email.com',
+            purchaser: email,
         };
         const ticket = await this.model.create(ticketData);
         return { status: "success", payload: ticket, productsNotProcessed };

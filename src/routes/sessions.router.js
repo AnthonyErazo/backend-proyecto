@@ -1,6 +1,8 @@
 const { Router } = require('express');
 const passport = require('passport')
 const SessionsController = require('../controller/sessions.controller');
+const { authentication } = require('../middleware/auth.middleware');
+const { isAdmin } = require('../utils/verifiqueRole');
 
 const {
     register,
@@ -27,6 +29,6 @@ router
     .get('/current', passport.authenticate("jwt", {
         session: false,
         failureRedirect: "/",
-    }), current);
+    }),isAdmin, current);
 
 module.exports = router;

@@ -21,6 +21,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 }, 2000);
             }
         })
-        .catch(error => console.error(error));
+        .catch(error => {
+            window.location.href = '/login';
+            console.error(error)
+        });
     }
 });

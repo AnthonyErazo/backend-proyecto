@@ -8,14 +8,20 @@
     </div>
     <div id="messageLogs">
         {{#if chatData}}
-            {{#each chatData}}
-            <p>{{this.user}} dice: {{this.message}}</p>
-            {{/each}}
+        {{#each chatData}}
+        <p>{{this.user}} dice: {{this.message}}</p>
+        {{/each}}
         {{else}}
-            <p>No hay mensajes disponibles</p>
+        <p>No hay mensajes disponibles</p>
         {{/if}}
     </div>
 </div>
+<script>
+    let userData = {
+        userName: '{{userName}}',
+        email: '{{email}}'
+    };
+</script>
 <script src=" https://cdn.jsdelivr.net/npm/sweetalert2@11.7.1/dist/sweetalert2.all.min.js "></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/realTimeChat.js"></script>

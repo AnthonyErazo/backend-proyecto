@@ -3,6 +3,7 @@ const handlebars = require('handlebars')
 const { Router } = require('express')
 const { authentication } = require('../middleware/auth.middleware')
 const ViewsController = require('../controller/views.controller')
+const { isAdmin, isUser } = require('../utils/verifiqueRole')
 
 const {
     loginView,
@@ -29,19 +30,20 @@ handlebars.registerHelper('excludeCurrentUser', function (currentEmail, userEmai
 });
 
 router
-    .get('/', loginView)
+    .get('/products',productsView)
     .get('/register', registerView)
     .get('/logout', logout)
     .get('/home', home)
-    .get('/realtimeproducts', realtimeProducts)
-    .get('/chat', chat)
-    .get('/products', passport.authenticate('jwt', {
-        session: false,
-        failureRedirect: "/"
-    }), productsView)
+    .get('/realtimeproducts',authentication,isAdmin, realtimeProducts)
+    .get('/chat',authentication,isUser, chat)
+    .get('/login',loginView)
     .get('/products/:productId', productDetail)
-    .get('/carts/:cid', cartDetail)
-    .post('/addToCart', addToCart)
-    .get('/user', authentication, user)
+    .get('/carts/:cid',authentication,isUser, cartDetail)
+    .get('/carts/', authentication, isUser, cartDetail)
+    .post('/addToCart',authentication,isUser, addToCart)
+    .get('/user', isAdmin, user)
+    .get('*', (req, res) => {
+        res.redirect('/products');
+    });
 
 module.exports = router

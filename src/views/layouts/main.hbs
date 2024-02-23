@@ -14,9 +14,9 @@
       <div>
         <a href="/user" class="userName">Bienvenido {{userName}}</a>
         <p class="userRole">{{userRole}}</p>
-        <a href="/logOut">log out</a>
       </div>
     </div>
+    {{/if}}
     <nav class="nav">
       <div class="navDiv">
         <ul>
@@ -25,10 +25,16 @@
           <li> <a href="/realTimeProducts">Tiempo Real</a></li>
           <li> <a href="/chat">Chat</a></li>
           <li> <a href="/carts/{{cart}}">Carrito</a></li>
+          {{#if userName}}
+                <li><a href="/api/session/logout" class="btn btn-info">Log out</a></li>
+            {{else}}
+                <li><a href="/login" class="btn btn-info">Log in</a></li>
+                <li><a href="/register" class="btn btn-info">Register</a></li>
+            {{/if}}
         </ul>
       </div>
     </nav>
-    {{/if}}
+
   </header>
 
   {{{body}}}

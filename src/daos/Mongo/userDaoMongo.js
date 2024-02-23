@@ -30,8 +30,13 @@ class UserDaoMongo {
             throw new Error('No hay usuarios disponibles');
         }
     }
-    async getBy(filter) {
-        const user= await this.model.findOne(filter).lean();
+    async getBy(filter,notPassword) {
+        let user
+        if(notPassword){
+            user= await this.model.findOne(filter).select('-password').lean();
+        }else{
+            user= await this.model.findOne(filter).lean();
+        }
         if (user) {
             return { status: "success", payload: user };
         } else {

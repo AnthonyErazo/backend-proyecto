@@ -7,10 +7,7 @@ const cookieParser = require('cookie-parser')
 const passport = require('passport')
 const { initializePassport } = require('./config/passport.config.js')
 
-const { ProductMongo } = require('./daos/Mongo/productsDaoMongo')
-const productService = new ProductMongo()
-const { MessageMongo } = require('./daos/Mongo/messagesDaoMongo')
-const messageService = new MessageMongo()
+const { productsService,messageService }=require('./repositories')
 
 const cors=require('cors')
 
@@ -30,24 +27,6 @@ sessionsMdb(app)
 
 initializePassport()
 app.use(passport.initialize())
-
-app.use(async (req, res, next) => {
-    try {
-        if (req.cookies.token) {
-            passport.authenticate('jwt', { session: false }, (err, user) => {
-                if (err || !user) {
-                    return next(err);
-                }
-                res.locals.currentUser = user;
-                next();
-            })(req, res, next);
-        } else {
-            next();
-        }
-    } catch (error) {
-        next(error);
-    }
-});
 
 app.engine('hbs', handlebars.engine({
     extname: '.hbs',
@@ -71,8 +50,8 @@ io.on('connection', socket => {
 
     socket.on('addProduct', async (data) => {
         try {
-            await productService.addProduct(data)
-            const newProducts = await productService.getProducts()
+            await productsService.createProduct(data)
+            const newProducts = await productsService.getProducts()
             io.emit('newProducts', newProducts.data)
         } catch (error) {
             console.error('Error al agregar producto:', error.message);
@@ -81,8 +60,8 @@ io.on('connection', socket => {
     })
     socket.on('eliminateProduct', async (id) => {
         try {
-            await productService.deleteProduct(id)
-            const newProducts = await productService.getProducts()
+            await productsService.deleteProduct(id)
+            const newProducts = await productsService.getProducts()
             io.emit('newProducts', newProducts.data)
         } catch (error) {
             console.error('Error al eliminar producto:', error.message);

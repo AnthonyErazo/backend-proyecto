@@ -1,13 +1,14 @@
 const passport = require('passport')
 const passport_jwt = require('passport-jwt')
 const GithubStrategy = require('passport-github2')
-const { usersService, cartsService } = require('../daos/Mongo')
+const { userService, cartsService } = require('../repositories')
 const { configObject } = require('.')
 
 const JWTStrategy = passport_jwt.Strategy
 const ExtractJWT = passport_jwt.ExtractJwt
 
 exports.initializePassport = () => {
+
 
     const cookieExtractor = req => {
         let token = null
@@ -16,7 +17,6 @@ exports.initializePassport = () => {
         }
         return token
     }
-
     passport.use('jwt', new JWTStrategy({
         jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
         secretOrKey: configObject.Jwt_private_key
@@ -35,15 +35,15 @@ exports.initializePassport = () => {
         scope: ['user:email'],
     }, async (accesToken, refreshToken, profile, done) => {
         try {
-            let user = await usersService.getUser({ email: !profile._json.email ? profile.emails[0].value : profile._json.email })
+            let user = await userService.getUser({ email: !profile._json.email ? profile.emails[0].value : profile._json.email }, false)
             if (!user) {
-                const cart=await cartsService.createNewCart();
+                const cart = await cartsService.createNewCart();
                 let userNew = {
                     first_name: profile.username,
                     email: !profile._json.email ? profile.emails[0].value : profile._json.email,
-                    cart:cart.data._id
+                    cart: cart.data._id
                 }
-                let result = await usersService.createUser(userNew)
+                let result = await userService.createUser(userNew)
                 return done(null, result)
             }
             done(null, user)
@@ -57,7 +57,7 @@ exports.initializePassport = () => {
         done(null, user._id)
     })
     passport.deserializeUser(async (id, done) => {
-        let user = await usersService.getUser({ _id: id })
+        let user = await userService.getUser({ _id: id }, false)
         done(null, user)
     })
 

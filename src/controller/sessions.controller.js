@@ -1,14 +1,14 @@
 const { configObject } = require("../config");
-const { userService,cartsService }=require('../repositories')
+const { userService, cartsService } = require('../repositories')
 const CustomError = require("../utils/errors");
 const { createHash, isValidPassword } = require("../utils/hashPassword");
 const { createToken } = require("../utils/jwt");
 const validateFields = require("../utils/validators");
 
-class SessionsController{
-    constructor(){
+class SessionsController {
+    constructor() {
     }
-    register= async (req, res) => {
+    register = async (req, res) => {
         try {
             const requieredfield = ['first_name', 'last_name', 'email', 'birthdate', 'password'];
             const userData = validateFields(req.body, requieredfield);
@@ -45,20 +45,24 @@ class SessionsController{
             }
         }
     }
-    login= async (req, res) => {
+    login = async (req, res) => {
         const requieredfield = ['email', 'password'];
         const userData = validateFields(req.body, requieredfield);
         try {
             if (userData.email === configObject.Admin_user_email && userData.password === configObject.Admin_user_password) {
-                req.session.user = {
+                const token = createToken({
                     first_name: 'admin',
                     email: configObject.Admin_user_email,
-                    role: 'admin',
-                };
+                    role: 'admin'
+                });
+                res.cookie(configObject.Cookie_auth, token, {
+                    maxAge: 60 * 60 * 1000 * 24,
+                    httpOnly: true
+                });
                 return res.redirect('/products');
             }
 
-            const {payload:userFound} = await userService.getUser({ email: userData.email });
+            const { payload: userFound } = await userService.getUser({ email: userData.email }, false);
 
             if (!userFound || !isValidPassword(userData.password, { password: userFound.password })) throw new CustomError(`Email o contraseña equivocado`);
 
@@ -83,28 +87,29 @@ class SessionsController{
             }
         }
     }
-    github= async (req, res) => {
+    github = async (req, res) => {
     }
-    githubCallback= async (req, res) => {
+    githubCallback = async (req, res) => {
         try {
             const user = req.user;
 
-            const token = createToken({id:user._id,role:user.role});
+            const token = createToken({ id: user._id, role: user.role });
 
-            res.cookie(configObject.Cookie_auth, token);
+            res.cookie(configObject.Cookie_auth, token, {
+                maxAge: 60 * 60 * 1000 * 24,
+                httpOnly: true
+            });
 
             res.redirect("/");
         } catch (error) {
             console.log(error);
         }
     }
-    logout= async (req, res) => {
-        req.session.destroy((err) => {
-            if (err) return res.send({ status: 'error', error: err });
-        });
+    logout = async (req, res) => {
+        res.clearCookie(configObject.Cookie_auth);
         res.redirect('/');
     }
-    current= async (req, res) => {
+    current = async (req, res) => {
         try {
             res.send('datos sensibles')
         } catch (error) {
@@ -113,4 +118,4 @@ class SessionsController{
     }
 }
 
-module.exports=SessionsController
+module.exports = SessionsController

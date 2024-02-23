@@ -6,10 +6,8 @@ let TicketDao
 
 switch ('MONGO') {
     case 'FILE':
-        //importa el dao de las entidades con persistencia en archivo
         break;
     case 'MEMORY':
-        //importa el dao de las entidades con persistencia en memoria
         break;
     default:
         const {ProductMongo} = require("./Mongo/productsDaoMongo");
