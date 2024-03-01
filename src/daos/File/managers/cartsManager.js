@@ -63,4 +63,4 @@ class CartManager {
         await fs.promises.writeFile(this.path, file);
     }
 }
-module.exports = CartManager
+exports.CartManager = CartManager

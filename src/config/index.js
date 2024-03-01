@@ -29,17 +29,3 @@ exports.connectDb = async () => {
     }
 }
 
-
-exports.sessionsMdb = (app) => {
-    app.use(
-        session({
-            // store: MongoStore.create({
-            //     mongoUrl: this.configObject.Database_mongo_Url,
-            //     ttl: 3000,
-            // }),
-            secret: process.env.Cookie_word_secret,
-            resave: true,
-            saveUninitialized: true,
-        })
-    );
-};

@@ -42,8 +42,8 @@ router
     .get('/carts/', authentication, isUser, cartDetail)
     .post('/addToCart',authentication,isUser, addToCart)
     .get('/user',authentication, user)
-    .get('*', (req, res) => {
-        res.redirect('/products');
-    });
+    // .get('*', (req, res) => {
+    //     res.redirect('/products');
+    // });
 
 module.exports = router

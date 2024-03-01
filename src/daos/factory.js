@@ -6,6 +6,10 @@ let TicketDao
 
 switch ('MONGO') {
     case 'FILE':
+        const {ProductManager} = require("./File/managers/productManager");
+        const {CartManager} = require("./File/managers/cartsManager");
+        ProductsDao = ProductManager
+        CartsDao = CartManager
         break;
     case 'MEMORY':
         break;

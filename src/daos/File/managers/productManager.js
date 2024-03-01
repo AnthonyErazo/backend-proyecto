@@ -100,4 +100,4 @@ class ProductManager {
     }
 }
 
-module.exports = ProductManager;
+exports.ProductManager = ProductManager;

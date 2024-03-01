@@ -1,5 +1,9 @@
 const { ObjectId } = require('mongoose').Types;
 const { cartModel } = require("./models/carts.model.js");
+const CustomError = require('../../utils/error/customErrors');
+const { enumErrors } = require('../../utils/error/errorEnum.js');
+const { generateCartErrorInfo } = require('../../utils/error/generateInfoError.js');
+const { enumActionsErrors } = require('../../utils/error/enumActionsErrors.js');
 
 class CartDaoMongo {
     constructor() {
@@ -17,7 +21,12 @@ class CartDaoMongo {
         if (cart) {
             return { success: true, data: cart };
         } else {
-            throw new Error('Carrito no encontrado')
+            CustomError.createError({
+                name:"CART ERROR",
+                code:enumErrors.DATABASE_ERROR,
+                message:generateCartErrorInfo(cart,enumActionsErrors.ERROR_GET),
+                cause:"Carrito no encontrado",
+            })
         }
     }
 
@@ -36,7 +45,12 @@ class CartDaoMongo {
             );
 
             if (!newCart) {
-                throw new Error("Carrito no encontrado.")
+                CustomError.createError({
+                    name:"CART ERROR",
+                    code:enumErrors.DATABASE_ERROR,
+                    message:generateCartErrorInfo(newCart,enumActionsErrors.ERROR_ADD),
+                    cause:"Carrito no encontrado",
+                })
             }
 
             return { success: true, data: newCart, message: 'Producto añadido al carrito correctamente' };
@@ -53,7 +67,12 @@ class CartDaoMongo {
         if (result.modifiedCount > 0) {
             return { success: true, result, message: 'Producto eliminado del carrito correctamente' };
         } else {
-            throw new Error('El producto no está en el carrito')
+            CustomError.createError({
+                name:"CART ERROR",
+                code:enumErrors.DATABASE_ERROR,
+                message:generateCartErrorInfo(result,enumActionsErrors.ERROR_DELETE),
+                cause:"El producto no está en el carrito",
+            })
         }
     }
 
@@ -66,7 +85,12 @@ class CartDaoMongo {
         if (result.modifiedCount > 0) {
             return { success: true, message: 'Todos los productos fueron eliminados del carrito correctamente' };
         } else {
-            throw new Error('El carrito no contiene productos')
+            CustomError.createError({
+                name:"CART ERROR",
+                code:enumErrors.DATABASE_ERROR,
+                message:generateCartErrorInfo(result,enumActionsErrors.ERROR_DELETE),
+                cause:"El carrito no contiene productos",
+            })
         }
     }
 
@@ -78,7 +102,12 @@ class CartDaoMongo {
         );
 
         if (!cart) {
-            throw new Error('Carrito no encontrado o producto no está en el carrito.')
+            CustomError.createError({
+                name:"CART ERROR",
+                code:enumErrors.DATABASE_ERROR,
+                message:generateCartErrorInfo(cart,enumActionsErrors.ERROR_UPDATE),
+                cause:"Carrito no encontrado o producto no está en el carrito.",
+            })
         }
 
         return { success: true, data: cart, message: 'Cantidad del producto actualizada correctamente' };
@@ -88,24 +117,13 @@ class CartDaoMongo {
         let updatedCart = await this.model.findById(cid);
 
         if (!updatedCart) {
-            throw new Error('Carrito no encontrado.')
+            CustomError.createError({
+                name:"CART ERROR",
+                code:enumErrors.DATABASE_ERROR,
+                message:generateCartErrorInfo(updatedCart,enumActionsErrors.ERROR_UPDATE),
+                cause:"Carrito no encontrado.",
+            })
         }
-
-        // for (const { product, quantity } of updatedProducts) {
-        //     updatedCart = await this.model.findOneAndUpdate(
-        //         { _id: updatedCart._id, "products.product": new ObjectId(product) },
-        //         { $set: { "products.$.quantity": quantity } },
-        //         { new: true }
-        //     );
-
-        //     if (!updatedCart) {
-        //         updatedCart = await this.model.findByIdAndUpdate(
-        //             cid,
-        //             { $addToSet: { products: { product: new ObjectId(product), quantity } } },
-        //             { new: true }
-        //         );
-        //     }
-        // }
         updatedCart.products = [];
 
         for (const { product, quantity } of updatedProducts) {

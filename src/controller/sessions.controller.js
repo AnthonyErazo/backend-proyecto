@@ -1,9 +1,10 @@
 const { configObject } = require("../config");
 const { userService, cartsService } = require('../repositories')
-const CustomError = require("../utils/errors");
 const { createHash, isValidPassword } = require("../utils/hashPassword");
 const { createToken } = require("../utils/jwt");
+const CustomError = require("../utils/error/customErrors");
 const validateFields = require("../utils/validators");
+const { enumErrors } = require("../utils/error/errorEnum");
 
 class SessionsController {
     constructor() {
@@ -15,7 +16,13 @@ class SessionsController {
 
             const userFound = await userService.existsUser({ email: userData.email });
 
-            if (userFound) throw new CustomError(`Ya existe un usuario con ese email, pruebe con otro`)
+            if (userFound) {
+                CustomError.createError({
+                    cause: "Ya existe un usuario con ese email",
+                    message: `Error al registrar usuario`,
+                    code: enumErrors.DATABASE_ERROR
+                })
+            }
 
             const cart = await cartsService.createNewCart();
             const newUser = {
@@ -35,14 +42,10 @@ class SessionsController {
             });
         } catch (error) {
             console.error(error);
-            if (error instanceof CustomError) {
-                res.render('register', { title: 'Registrase', answer: error.message });
-            } else {
-                res.render('register', {
-                    title: 'Registrase',
-                    answer: 'Ocurrio un error, vuelva a intentarlo',
-                });
-            }
+            res.render('register', {
+                title: 'Registrase',
+                answer: error.cause
+            });
         }
     }
     login = async (req, res) => {
@@ -64,7 +67,11 @@ class SessionsController {
 
             const { payload: userFound } = await userService.getUser({ email: userData.email }, false);
 
-            if (!userFound || !isValidPassword(userData.password, { password: userFound.password })) throw new CustomError(`Email o contraseña equivocado`);
+            if (!userFound || !isValidPassword(userData.password, { password: userFound.password })) CustomError.createError({
+                cause: `Email o contraseña equivocado`,
+                message: `Error al iniciar sesion`,
+                code: enumErrors.INVALID_TYPES_ERROR
+            })
 
             const token = createToken({ id: userFound._id, role: userFound.role })
             res.cookie(configObject.Cookie_auth, token, {
@@ -74,17 +81,10 @@ class SessionsController {
             res.redirect('/products');
         } catch (error) {
             console.error(error);
-            if (error instanceof CustomError) {
-                res.render('login', {
-                    title: 'Login',
-                    answer: error.message
-                });
-            } else {
-                res.render('login', {
-                    title: 'Login',
-                    answer: 'Ocurrio un error, vuelva a intentarlo'
-                });
-            }
+            res.render('login', {
+                title: 'Login',
+                answer: error.cause
+            });
         }
     }
     github = async (req, res) => {

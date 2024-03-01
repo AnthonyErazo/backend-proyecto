@@ -1,4 +1,5 @@
-const CustomError = require("./errors");
+const CustomError = require("./error/customErrors");
+const { enumErrors } = require("./error/errorEnum");
 
 const validateFields = (fields, requiredFields) => {
     const missingFields = [];
@@ -12,7 +13,11 @@ const validateFields = (fields, requiredFields) => {
     }, {});
 
     if (missingFields.length > 0) {
-        throw new CustomError(`ERROR: Debe completar los siguientes campos: ${missingFields.join(', ')}`);
+        CustomError.createError({
+            cause: `ERROR: Debe completar los siguientes campos: ${missingFields.join(', ')}`,
+            message: `Error al ingresar usuario`,
+            code:enumErrors.INVALID_TYPES_ERROR
+        })
     }
 
     return correctObject;

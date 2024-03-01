@@ -1,4 +1,4 @@
-const { productsService, cartsService, ticketService } = require('../repositories');
+const { productsService, cartsService, ticketService,userService } = require('../repositories');
 const { sendMail } = require('../utils/sendMail');
 
 class CartsController {
@@ -12,7 +12,12 @@ class CartsController {
             return res.status(200).json(dataCart);
         } catch (error) {
             console.error('Error al obtener productos del carrito:', error);
-            return res.status(500).json({ status: 'error', message: 'Error al obtener productos del carrito.', error: error.message });
+            return res.status(500).json({ 
+                status: 'error', 
+                message: 'Error al obtener productos del carrito.', 
+                error: error.message,
+                causer:error.cause 
+            });
         }
     }
     createNewCart = async (req, res) => {
@@ -21,7 +26,12 @@ class CartsController {
             return res.status(200).json(newCart);
         } catch (error) {
             console.error('Error al crear carrito:', error);
-            return res.status(500).json({ status: 'error', message: 'Error al crear carrito.', error: error.message });
+            return res.status(500).json({ 
+                status: 'error', 
+                message: 'Error al crear carrito.', 
+                error: error.message,
+                causer:error.cause 
+            });
         }
     }
     addProductByCartId = async (req, res) => {
@@ -32,7 +42,12 @@ class CartsController {
             return res.status(200).json(newCart);
         } catch (error) {
             console.error('Error al agregar producto al carrito:', error);
-            return res.status(500).json({ status: 'error', message: 'Error al agregar producto al carrito.', error: error.message });
+            return res.status(500).json({ 
+                status: 'error', 
+                message: 'Error al agregar producto al carrito.', 
+                error: error.message,
+                causer:error.cause 
+            });
         }
     }
     removeProductByCartId = async (req, res) => {
@@ -42,7 +57,12 @@ class CartsController {
             return res.status(200).json(newCart);
         } catch (error) {
             console.error('Error al agregar producto al carrito:', error);
-            return res.status(500).json({ status: 'error', message: 'Error al agregar producto al carrito.', error: error.message });
+            return res.status(500).json({ 
+                status: 'error', 
+                message: 'Error al remover producto del carrito.', 
+                error: error.message,
+                causer:error.cause 
+            });
         }
     }
     updateProductsInCart = async (req, res) => {
@@ -50,13 +70,18 @@ class CartsController {
             const updatedProducts = req.body;
             const { cid } = req.params;
             for (const productId of updatedProducts) {
-                await productsService.getBy({ _id: productId.product })
+                await productsService.getProduct({ _id: productId.product })
             }
             const newCart = await this.service.updateProductsInCart(cid, updatedProducts);
             return res.status(200).json(newCart);
         } catch (error) {
             console.error('Error al agregar producto al carrito:', error);
-            return res.status(500).json({ status: 'error', message: 'Error al agregar producto al carrito.', error: error.message });
+            return res.status(500).json({ 
+                status: 'error', 
+                message: 'Error al actualizar productos del carrito.', 
+                error: error.message,
+                causer:error.cause 
+            });
         }
     }
     updateProductQuantity = async (req, res) => {
@@ -67,7 +92,12 @@ class CartsController {
             return res.status(200).json(newCart);
         } catch (error) {
             console.error('Error al agregar producto al carrito:', error);
-            return res.status(500).json({ status: 'error', message: 'Error al agregar producto al carrito.', error: error.message });
+            return res.status(500).json({ 
+                status: 'error', 
+                message: 'Error al actualizar cantidad de producto al carrito.', 
+                error: error.message,
+                causer:error.cause 
+            });
         }
     }
     removeAllProductsByCartId = async (req, res) => {
@@ -77,14 +107,21 @@ class CartsController {
             return res.status(200).json(newCart);
         } catch (error) {
             console.error('Error al agregar producto al carrito:', error);
-            return res.status(500).json({ status: 'error', message: 'Error al agregar producto al carrito.', error: error.message });
+            return res.status(500).json({ 
+                status: 'error', 
+                message: 'Error al remover todos los productos del carrito.', 
+                error: error.message,
+                causer:error.cause 
+            });
         }
     }
     purchaseCart = async (req, res) => {
         try {
             const { cid } = req.params;
+            const {id}=req.user
+            const {payload}=await userService.getUser({_id:id})
             const cartResponse = await this.service.getProductsByCartId(cid);
-            const ticket = await ticketService.createTicket(cartResponse);
+            const ticket = await ticketService.createTicket(cartResponse,payload.email);
             await this.service.updateProductsInCart(cid, ticket.productsNotProcessed);
             const to = ticket.payload.purchaser
             const subject = 'Tickect generado'
@@ -98,7 +135,12 @@ class CartsController {
             return res.status(200).json(ticket);
         } catch (error) {
             console.error('Error al finalizar la compra:', error);
-            return res.status(500).json({ status: 'error', message: 'Error al finalizar la compra', error: error.message });
+            return res.status(500).json({ 
+                status: 'error', 
+                message: 'Error al finalizar la compra', 
+                error: error.message,
+                causer:error.cause 
+            });
         }
     }
 }

@@ -1,5 +1,9 @@
 const { ObjectId } = require('mongoose').Types;
 const { productModel } = require('./models/products.model');
+const CustomError = require('../../utils/error/customErrors');
+const { enumErrors } = require('../../utils/error/errorEnum');
+const { generateProductErrorInfo } = require('../../utils/error/generateInfoError');
+const { enumActionsErrors } = require('../../utils/error/enumActionsErrors');
 
 class ProductDaoMongo {
     constructor() {
@@ -14,10 +18,17 @@ class ProductDaoMongo {
             lean: true,
         };
 
+        
+
         if (sort) {
             const parsedSort = parseInt(sort);
             if (![1, -1].includes(parsedSort)) {
-                throw new Error('El parámetro sort debe ser 1 o -1');
+                CustomError.createError({
+                    name:"PRODUCT ERROR",
+                    code:enumErrors.INVALID_TYPES_ERROR,
+                    message:generateProductErrorInfo(1,enumActionsErrors.ERROR_GET),
+                    cause:"El parámetro sort debe ser 1 o -1",
+                })
             }
             options.sort = { price: parsedSort };
         }
@@ -27,7 +38,12 @@ class ProductDaoMongo {
             try {
                 parsedQuery = JSON.parse(query);
             } catch (error) {
-                throw new Error('Error al analizar el parámetro de consulta JSON');
+                CustomError.createError({
+                    name:"PRODUCT ERROR",
+                    code:enumErrors.INVALID_TYPES_ERROR,
+                    message:generateProductErrorInfo(1,enumActionsErrors.ERROR_GET),
+                    cause:"Error al analizar el parámetro de consulta JSON",
+                })
             }
         }
 
@@ -42,7 +58,12 @@ class ProductDaoMongo {
                 nextLink: rest.hasNextPage ? `/products?limit=${limit}&page=${rest.nextPage}` : null,
             };
         } else {
-            throw new Error('No hay productos disponibles');
+            CustomError.createError({
+                name:"PRODUCT ERROR",
+                code:enumErrors.DATABASE_ERROR,
+                message:generateProductErrorInfo(payload,enumActionsErrors.ERROR_GET),
+                cause:"No hay productos disponibles",
+            })
         }
     };
 
@@ -52,7 +73,12 @@ class ProductDaoMongo {
         if (product) {
             return { status: "success", payload: product };
         } else {
-            throw new Error(`Producto no encontrado`)
+            CustomError.createError({
+                name:"PRODUCT ERROR",
+                code:enumErrors.DATABASE_ERROR,
+                message:generateProductErrorInfo(product,enumActionsErrors.ERROR_GET),
+                cause:"No hay productos disponibles",
+            })
         }
 
     };
@@ -69,7 +95,12 @@ class ProductDaoMongo {
         } = product;
 
         if (!(title && description && price && code && stock && category)) {
-            throw new Error("Todos los campos ingresados son obligatorios.")
+            CustomError.createError({
+                name:"PRODUCT ERROR",
+                code:enumErrors.INVALID_TYPES_ERROR,
+                message:generateProductErrorInfo(product,enumActionsErrors.ERROR_ADD),
+                cause:"Todos los campos ingresados son obligatorios.",
+            })
         }
         const newProduct = await this.model.create(product);
 
@@ -83,7 +114,12 @@ class ProductDaoMongo {
 
         if (existingProduct) {
             if (updatedFields.id && updatedFields.id !== pid.toString()) {
-                throw new Error("No se permite modificar el campo 'id'")
+                CustomError.createError({
+                    name:"PRODUCT ERROR",
+                    code:enumErrors.INVALID_TYPES_ERROR,
+                    message:generateProductErrorInfo(existingProduct,enumActionsErrors.ERROR_UPDATE),
+                    cause:"No se permite modificar el campo 'id'",
+                })
             }
             const allowedProperties = ['title', 'description', 'price', 'thumbnail', 'code', 'stock', 'status', 'category'];
 
@@ -97,10 +133,20 @@ class ProductDaoMongo {
             if (result.modifiedCount > 0) {
                 return { status: "success", message: 'Producto actualizado correctamente' };
             } else {
-                throw new Error('Ningún cambio realizado en el producto')
+                CustomError.createError({
+                    name:"PRODUCT ERROR",
+                    code:enumErrors.DATABASE_ERROR,
+                    message:generateProductErrorInfo(existingProduct,enumActionsErrors.ERROR_UPDATE),
+                    cause:"Ningún cambio realizado en el producto",
+                })
             }
         } else {
-            throw new Error('Producto no encontrado')
+            CustomError.createError({
+                name:"PRODUCT ERROR",
+                code:enumErrors.DATABASE_ERROR,
+                message:generateProductErrorInfo(existingProduct,enumActionsErrors.ERROR_UPDATE),
+                cause:"Producto no encontrado",
+            })
         }
 
     };
@@ -110,7 +156,12 @@ class ProductDaoMongo {
         if (ProductDelete) {
             return { status: "success", message: 'Producto eliminado correctamente', payload:ProductDelete }
         } else {
-            throw new Error('Producto no encontrado')
+            CustomError.createError({
+                name:"PRODUCT ERROR",
+                code:enumErrors.DATABASE_ERROR,
+                message:generateProductErrorInfo(ProductDelete,enumActionsErrors.ERROR_DELETE),
+                cause:"Producto no encontrado",
+            })
         }
 
     }
