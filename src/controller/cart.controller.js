@@ -1,4 +1,5 @@
 const { productsService, cartsService, ticketService,userService } = require('../repositories');
+const { logger } = require('../utils/logger');
 const { sendMail } = require('../utils/sendMail');
 
 class CartsController {
@@ -11,7 +12,7 @@ class CartsController {
             let dataCart = await this.service.getProductsByCartId(cid);
             return res.status(200).json(dataCart);
         } catch (error) {
-            console.error('Error al obtener productos del carrito:', error);
+            logger.error('Error al obtener productos del carrito:', error);
             return res.status(500).json({ 
                 status: 'error', 
                 message: 'Error al obtener productos del carrito.', 
@@ -25,7 +26,7 @@ class CartsController {
             const newCart = await this.service.createNewCart();
             return res.status(200).json(newCart);
         } catch (error) {
-            console.error('Error al crear carrito:', error);
+            logger.error('Error al crear carrito:', error);
             return res.status(500).json({ 
                 status: 'error', 
                 message: 'Error al crear carrito.', 
@@ -41,7 +42,7 @@ class CartsController {
             const newCart = await this.service.addProductByCartId(cid, pid);
             return res.status(200).json(newCart);
         } catch (error) {
-            console.error('Error al agregar producto al carrito:', error);
+            logger.error('Error al agregar producto al carrito:', error);
             return res.status(500).json({ 
                 status: 'error', 
                 message: 'Error al agregar producto al carrito.', 
@@ -56,7 +57,7 @@ class CartsController {
             const newCart = await this.service.removeProductByCartId(cid, pid);
             return res.status(200).json(newCart);
         } catch (error) {
-            console.error('Error al agregar producto al carrito:', error);
+            logger.error('Error al agregar producto al carrito:', error);
             return res.status(500).json({ 
                 status: 'error', 
                 message: 'Error al remover producto del carrito.', 
@@ -75,7 +76,7 @@ class CartsController {
             const newCart = await this.service.updateProductsInCart(cid, updatedProducts);
             return res.status(200).json(newCart);
         } catch (error) {
-            console.error('Error al agregar producto al carrito:', error);
+            logger.error('Error al agregar producto al carrito:', error);
             return res.status(500).json({ 
                 status: 'error', 
                 message: 'Error al actualizar productos del carrito.', 
@@ -91,7 +92,7 @@ class CartsController {
             const newCart = await this.service.updateProductQuantity(cid, pid, newQuantity);
             return res.status(200).json(newCart);
         } catch (error) {
-            console.error('Error al agregar producto al carrito:', error);
+            logger.error('Error al agregar producto al carrito:', error);
             return res.status(500).json({ 
                 status: 'error', 
                 message: 'Error al actualizar cantidad de producto al carrito.', 
@@ -106,7 +107,7 @@ class CartsController {
             const newCart = await this.service.removeAllProductsByCartId(cid);
             return res.status(200).json(newCart);
         } catch (error) {
-            console.error('Error al agregar producto al carrito:', error);
+            logger.error('Error al agregar producto al carrito:', error);
             return res.status(500).json({ 
                 status: 'error', 
                 message: 'Error al remover todos los productos del carrito.', 
@@ -120,21 +121,13 @@ class CartsController {
             const { cid } = req.params;
             const {id}=req.user
             const {payload}=await userService.getUser({_id:id})
+
             const cartResponse = await this.service.getProductsByCartId(cid);
-            const ticket = await ticketService.createTicket(cartResponse,payload.email);
-            await this.service.updateProductsInCart(cid, ticket.productsNotProcessed);
-            const to = ticket.payload.purchaser
-            const subject = 'Tickect generado'
-            const html = `<div>
-                    <h2>Resumen de la compra</h2>
-                    <p>codigo de ticket: ${ticket.payload.code}</p>
-                    <p>total: ${ticket.payload.amount}</p>
-                    <p>fecha de pago: ${ticket.payload.purchase_datetime}</p>
-                </div>`
-            sendMail(to, subject, html)
+            const ticket = await ticketService.createTicket(cid,cartResponse,payload.email);
+
             return res.status(200).json(ticket);
         } catch (error) {
-            console.error('Error al finalizar la compra:', error);
+            logger.error('Error al finalizar la compra:', error);
             return res.status(500).json({ 
                 status: 'error', 
                 message: 'Error al finalizar la compra', 

@@ -1,10 +1,11 @@
-const { configObject } = require("../config");
+const { configObject } = require('../config/configObject');
 const { userService, cartsService } = require('../repositories')
 const { createHash, isValidPassword } = require("../utils/hashPassword");
 const { createToken } = require("../utils/jwt");
 const CustomError = require("../utils/error/customErrors");
 const validateFields = require("../utils/validators");
 const { enumErrors } = require("../utils/error/errorEnum");
+const { logger } = require("../utils/logger");
 
 class SessionsController {
     constructor() {
@@ -41,7 +42,7 @@ class SessionsController {
                 answer: 'Se ha registrado satisfactoriamente',
             });
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             res.render('register', {
                 title: 'Registrase',
                 answer: error.cause
@@ -80,7 +81,7 @@ class SessionsController {
             })
             res.redirect('/products');
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             res.render('login', {
                 title: 'Login',
                 answer: error.cause
@@ -102,7 +103,7 @@ class SessionsController {
 
             res.redirect("/");
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
     logout = async (req, res) => {
@@ -113,7 +114,7 @@ class SessionsController {
         try {
             res.send('datos sensibles')
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 }

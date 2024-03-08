@@ -1,5 +1,6 @@
-const { configObject } = require('../config');
-const jwt = require('jsonwebtoken')
+const { configObject } = require('../config/configObject');
+const jwt = require('jsonwebtoken');
+const { logger } = require('../utils/logger');
 exports.extractTokenData = async (req, res, next) => {
     const token = req.cookies.token;
     if (!token) {
@@ -11,7 +12,7 @@ exports.extractTokenData = async (req, res, next) => {
         req.user=decoded
         next()
     } catch (error) {
-        console.error('Error al verificar el token:', error.message);
+        logger.error('Error al verificar el token:', error.message);
     }
     
 };

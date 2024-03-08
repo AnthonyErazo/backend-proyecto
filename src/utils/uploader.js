@@ -1,5 +1,6 @@
 const multer = require('multer')
 const {dirname} = require('node:path')
+const { logger } = require('./logger')
 const storage = multer.diskStorage({
     destination: function (req, file, callback) {
         callback(null, `${dirname(__dirname)}/public/uploads`)
@@ -12,7 +13,7 @@ const storage = multer.diskStorage({
 const uploader = multer({
     storage,
     onError: function (error, next) {
-        console.log(error)
+        logger.error(error)
         next()
     }
 })

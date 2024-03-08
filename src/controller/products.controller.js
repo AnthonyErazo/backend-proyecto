@@ -1,4 +1,5 @@
-const { productsService } = require('../repositories')
+const { productsService } = require('../repositories');
+const { logger } = require('../utils/logger');
 
 class ProductsController {
     constructor() {
@@ -10,7 +11,7 @@ class ProductsController {
             const dataProducts = await this.service.getProducts(limit, page, sort, query);
             return res.status(200).json(dataProducts);
         } catch (error) {
-            console.error('Error al obtener productos:', error);
+            logger.error('Error al obtener productos:', error);
             return res.status(500).json({
                 status: 'error',
                 message: 'Error al obtener productos',
@@ -25,7 +26,7 @@ class ProductsController {
             let dataProducts = await this.service.getProduct({ _id: pid });
             return res.status(200).json(dataProducts);
         } catch (error) {
-            console.error('Error al obtener producto.', error);
+            logger.error('Error al obtener producto.', error);
             return res.status(500).json({
                 status: 'error',
                 message: 'Error al obtener producto.',
@@ -40,7 +41,7 @@ class ProductsController {
             const newProducts = await this.service.createProduct(product);
             return res.status(200).json(newProducts);
         } catch (error) {
-            console.error('Error al insertar producto:', error);
+            logger.error('Error al insertar producto:', error);
             return res.status(500).json({
                 status: 'error',
                 message: 'Error al insertar producto.',
@@ -53,12 +54,10 @@ class ProductsController {
         try {
             const product = req.body;
             const { pid } = req.params;
-            console.log(pid)
-            console.log(product)
             const newProducts = await this.service.updateProduct(pid, product);
             return res.status(200).json(newProducts);
         } catch (error) {
-            console.error('Error al modificar producto:', error);
+            logger.error('Error al modificar producto:', error);
             return res.status(500).json({
                 status: 'error',
                 message: 'Error al modificar producto.',
@@ -73,7 +72,7 @@ class ProductsController {
             const newProducts = await this.service.deleteProduct(pid);
             return res.status(200).json(newProducts);
         } catch (error) {
-            console.error('Error al eliminar producto:', error);
+            logger.error('Error al eliminar producto:', error);
             return res.status(500).json({
                 status: 'error',
                 message: 'Error al eliminar producto.',

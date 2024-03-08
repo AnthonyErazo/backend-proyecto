@@ -2,13 +2,16 @@ const express = require('express');
 const handlebars = require('express-handlebars')
 const appRouter = require('./routes')
 
-const { connectDb, configObject } = require('./config')
+const { connectDb } = require('./config')
+const { configObject } = require('./config/configObject.js');
 const cookieParser = require('cookie-parser')
 const passport = require('passport')
 const { initializePassport } = require('./config/passport.config.js')
 
 const cors=require('cors');
 const socketIOfunction = require('./utils/socketIOfunction.js');
+const { handleError } = require('./utils/error/handleError.js');
+const { addLogger, logger } = require('./utils/logger.js');
 
 
 const app = express()
@@ -33,12 +36,13 @@ app.engine('hbs', handlebars.engine({
 app.set('view engine', 'hbs')
 app.set('views', __dirname + '/views')
 
-
+app.use(addLogger)
 app.use(appRouter)
+app.use(handleError)
 
 const httpServer = app.listen(PORT, err => {
-    if (err) console.log(err)
-    console.log(`Escuchando en el puerto ${PORT}`)
+    if (err) logger.error(err)
+    logger.info(`Escuchando en el puerto ${PORT}`)
 })
 
 const io=socketIOfunction(httpServer)

@@ -2,7 +2,7 @@ const passport = require('passport')
 const passport_jwt = require('passport-jwt')
 const GithubStrategy = require('passport-github2')
 const { userService, cartsService } = require('../repositories')
-const { configObject } = require('.')
+const { configObject } = require('./configObject');
 
 const JWTStrategy = passport_jwt.Strategy
 const ExtractJWT = passport_jwt.ExtractJwt

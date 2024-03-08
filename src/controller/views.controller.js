@@ -1,4 +1,4 @@
-const { configObject } = require("../config");
+const { configObject } = require('../config/configObject');
 const { productsService,messageService,userService,cartsService }=require('../repositories')
 
 const dataUser =async (req,res) =>{

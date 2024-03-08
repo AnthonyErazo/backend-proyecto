@@ -15,18 +15,28 @@ const generateProducts = () => {
 
 const router = Router()
 
-router.get('/mockingproducts', (req, res) =>{
+router
+    .get('/mockingproducts', (req, res) => {
 
-    let products = []
+        let products = []
 
-    for (let i = 0; i < 100; i++) {
-        products.push(generateProducts())
-    }
+        for (let i = 0; i < 100; i++) {
+            products.push(generateProducts())
+        }
 
-    res.json({
-        status: 'success',
-        payload: products
+        res.json({
+            status: 'success',
+            payload: products
+        })
     })
-})
+    .get('/loggerTest', (req, res) => {
+        req.logger.debug('Debug message')
+        req.logger.http('HTTP message')
+        req.logger.info('Info message')
+        req.logger.warning('Warning message')
+        req.logger.error('Error message')
+        req.logger.fatal('Fatal message')
+        res.send('Logging test completed')
+    })
 
 module.exports = router

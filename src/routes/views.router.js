@@ -1,4 +1,3 @@
-const passport = require('passport')
 const handlebars = require('handlebars')
 const { Router } = require('express')
 const { authentication } = require('../middleware/auth.middleware')

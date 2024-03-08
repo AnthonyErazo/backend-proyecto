@@ -1,11 +1,12 @@
 const { Server } = require('socket.io')
-const { productsService,messageService }=require('../repositories')
+const { productsService,messageService }=require('../repositories');
+const { logger } = require('./logger');
 
 //SOCKET IO
 function socketIOfunction(httpServer) {
     const io = new Server(httpServer)
     io.on('connection', socket => {
-        console.log('Nuevo cliente conectado');
+        logger.info('Nuevo cliente conectado');
 
         //REALTIMEPRODUCTS
         //Añadir productos en tiempo real
@@ -15,7 +16,7 @@ function socketIOfunction(httpServer) {
                 const newProducts = await productsService.getProducts()
                 io.emit('newProducts', newProducts.data)
             } catch (error) {
-                console.error('Error al agregar producto:', error.message);
+                logger.error('Error al agregar producto:', error.message);
                 socket.emit('error', { message: 'Error al agregar producto' });
             }
         })
@@ -26,7 +27,7 @@ function socketIOfunction(httpServer) {
                 const newProducts = await productsService.getProducts()
                 io.emit('newProducts', newProducts.data)
             } catch (error) {
-                console.error('Error al eliminar producto:', error.message);
+                logger.error('Error al eliminar producto:', error.message);
                 socket.emit('error', { message: 'Error al eliminar producto' });
             }
         })
@@ -46,7 +47,7 @@ function socketIOfunction(httpServer) {
 
         
         socket.on('disconnect', () => {
-            console.log('Cliente desconectado');
+            logger.info('Cliente desconectado');
         })
     })
     return io
