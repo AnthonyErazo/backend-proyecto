@@ -14,7 +14,7 @@ const validateFields = (fields, requiredFields) => {
 
     if (missingFields.length > 0) {
         CustomError.createError({
-            cause: `ERROR: Debe completar los siguientes campos: ${missingFields.join(', ')}`,
+            cause: `Debe completar los siguientes campos: ${missingFields.join(', ')}`,
             message: `Error al ingresar usuario`,
             code:enumErrors.INVALID_TYPES_ERROR
         })

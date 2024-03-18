@@ -1,3 +1,5 @@
+const { sendMail } = require("../utils/sendMail")
+
 class TicketRepository {
     constructor(dao) {
         this.dao = dao

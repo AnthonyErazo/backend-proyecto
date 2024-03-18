@@ -37,15 +37,14 @@ class SessionsController {
 
             await userService.createUser(newUser);
 
-            res.render('login', {
-                title: 'Login',
-                answer: 'Se ha registrado satisfactoriamente',
-            });
+            return res.status(200).json({ message: 'Se ha registrado satisfactoriamente' });
         } catch (error) {
             logger.error(error);
-            res.render('register', {
-                title: 'Registrase',
-                answer: error.cause
+            return res.status(500).json({
+                status: 'error',
+                message: 'Error al registrar usuario',
+                error: error.message,
+                cause: error.cause
             });
         }
     }
@@ -61,31 +60,45 @@ class SessionsController {
                 });
                 res.cookie(configObject.Cookie_auth, token, {
                     maxAge: 60 * 60 * 1000 * 24,
-                    httpOnly: true
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: 'lax',
+                    credentials: true 
                 });
-                return res.redirect('/products');
+                // return res.redirect('/products');
             }
 
             const { payload: userFound } = await userService.getUser({ email: userData.email }, false);
-
+            
             if (!userFound || !isValidPassword(userData.password, { password: userFound.password })) CustomError.createError({
                 cause: `Email o contraseña equivocado`,
                 message: `Error al iniciar sesion`,
                 code: enumErrors.INVALID_TYPES_ERROR
             })
-
+            
             const token = createToken({ id: userFound._id, role: userFound.role })
+            console.log(configObject.Cookie_auth+' '+token)
             res.cookie(configObject.Cookie_auth, token, {
                 maxAge: 60 * 60 * 1000 * 24,
-                httpOnly: true
+                httpOnly: true,
+                secure: true,
+                credentials: true ,
+                sameSite: 'lax',
+                credentials: true 
             })
-            res.redirect('/products');
+            // res.redirect('/products');
         } catch (error) {
             logger.error(error);
-            res.render('login', {
-                title: 'Login',
-                answer: error.cause
+            return res.status(500).json({
+                status: 'error',
+                message: 'Error al logear usuario',
+                error: error.message,
+                cause: error.cause
             });
+            // res.render('login', {
+            //     title: 'Login',
+            //     answer: error.cause
+            // });
         }
     }
     github = async (req, res) => {

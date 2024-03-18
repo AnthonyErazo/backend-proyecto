@@ -1,0 +1,44 @@
+.page_404 {
+    padding: 40px 0;
+    background: #fff;
+    font-family: 'Arvo', serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.four_zero_four_bg {
+    background-image: url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif);
+    height: 400px;
+    background-position: center;
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+}
+
+.four_zero_four_bg h1 {
+    font-size: 80px;
+    text-align: center;
+    color: #000; /* Ajusta el color del texto para que sea visible en la imagen de fondo */
+}
+
+.four_zero_four_bg h2 {
+    font-size: 80px;
+    color: #000; /* Ajusta el color del texto para que sea visible en la imagen de fondo */
+}
+
+.link_404 {
+    color: #fff !important;
+    padding: 10px 20px;
+    background: #39ac31;
+    margin: 20px 0;
+    display: inline-block;
+}
+
+.contant_box_404 {
+    margin-top: -50px;
+}
+
+.container-page {
+    width: 100%;
+    text-align: center; /* Centra el contenido dentro del contenedor */
+}

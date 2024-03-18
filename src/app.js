@@ -8,7 +8,7 @@ const cookieParser = require('cookie-parser')
 const passport = require('passport')
 const { initializePassport } = require('./config/passport.config.js')
 
-const cors=require('cors');
+const cors = require('cors');
 const socketIOfunction = require('./utils/socketIOfunction.js');
 const { handleError } = require('./utils/error/handleError.js');
 const { addLogger, logger } = require('./utils/logger.js');
@@ -17,21 +17,28 @@ const { addLogger, logger } = require('./utils/logger.js');
 const app = express()
 const PORT = configObject.PORT
 
+app.use(cors({
+    origin: ["http://localhost:5173"],
+    methods: ["GET", "POST","PUT","DELETE"],
+    credentials: true
+}))
 
 connectDb()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static(__dirname + '/public'))
-app.use(cookieParser(configObject.Cookie_word_secret))
-app.use(cors())
+app.use(cookieParser())
+// app.use(cookieParser(configObject.Cookie_word_secret))
+
+
 
 initializePassport()
 app.use(passport.initialize())
 
 app.engine('hbs', handlebars.engine({
     extname: '.hbs',
-    allowProtoPropertiesByDefault:true,
-    allowProtoMethodsByDefault:true,
+    allowProtoPropertiesByDefault: true,
+    allowProtoMethodsByDefault: true,
 }))
 app.set('view engine', 'hbs')
 app.set('views', __dirname + '/views')
@@ -45,4 +52,4 @@ const httpServer = app.listen(PORT, err => {
     logger.info(`Escuchando en el puerto ${PORT}`)
 })
 
-const io=socketIOfunction(httpServer)
+const io = socketIOfunction(httpServer)

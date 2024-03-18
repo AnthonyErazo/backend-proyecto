@@ -10,8 +10,8 @@ class ProductDaoMongo {
         this.model = productModel;
     }
 
-    async get(limit = 10, page = 1, sort, query) {
-
+    async get(limit = 10, page = 1, sort, query,term) {
+        
         const options = {
             limit: parseInt(limit),
             page: parseInt(page),
@@ -36,6 +36,7 @@ class ProductDaoMongo {
         let parsedQuery = {};
         if (query) {
             try {
+                console.log(query)
                 parsedQuery = JSON.parse(query);
             } catch (error) {
                 CustomError.createError({
@@ -45,6 +46,10 @@ class ProductDaoMongo {
                     cause:"Error al analizar el parámetro de consulta JSON",
                 })
             }
+        }
+        if (term) {
+            const regex = new RegExp(term, 'i');
+            parsedQuery.title = { $regex: regex };
         }
 
         const { docs: payload, ...rest } = await this.model.paginate(parsedQuery, options);
@@ -58,17 +63,21 @@ class ProductDaoMongo {
                 nextLink: rest.hasNextPage ? `/products?limit=${limit}&page=${rest.nextPage}` : null,
             };
         } else {
+            let cause="No hay productos disponibles"
+            if(term){
+                cause=`No se encontraron resultados para '${term}'`
+            }
             CustomError.createError({
                 name:"PRODUCT ERROR",
                 code:enumErrors.DATABASE_ERROR,
                 message:generateProductErrorInfo(payload,enumActionsErrors.ERROR_GET),
-                cause:"No hay productos disponibles",
+                cause,
             })
         }
     };
 
     async getBy(filter) {
-        const product = await this.model.findOne(filter).lean();
+        const product = await this.model.findOne({status:true,...filter}).lean();
 
         if (product) {
             return { status: "success", payload: product };

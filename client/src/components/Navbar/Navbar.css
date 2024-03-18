@@ -1,0 +1,126 @@
+header {
+    width: 100%;
+    top: 0;
+    right: 0;
+    z-index: 1000;
+    position: fixed;
+    background: var(--bg-color);
+    box-shadow: 0px 2px 18px rgb(129 162 182 / 20%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 25px 6%;
+    transition: .3s;
+}
+
+.search-bar {
+    flex-grow: 1;
+    margin: 0 20px;
+    position: relative;
+    width: 200%;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+.search-bar i {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.account-bar,
+.category-bar {
+    position: absolute;
+    top: calc(100% + 10px);
+    background-color: #fff;
+    box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    display: none;
+}
+.category-bar{
+    width: calc(100% - 20px);
+    left: 10px;
+}
+
+.account.active .account-bar,
+.category.active .category-bar {
+    display: block;
+    cursor: default;
+}
+
+.account-bar ul,
+.category-bar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.account-bar ul li,
+.category-bar ul li {
+    padding: 10px 20px;
+}
+
+.account-bar ul li a,
+.category-bar ul li a {
+    text-decoration: none;
+    color: #000;
+}
+.account.active .account-bar{
+    width: 140px;
+    border-radius:0 0 20px 20px;
+}
+
+.container-logo{
+    display: flex;
+    width: 100%;
+    justify-content:space-around;
+}
+.container-logo .logo{
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    text-decoration: none;
+    color: #000;
+}
+.container-logo .logo img{
+    margin-right: 10px;
+}
+.account-button,
+.category-button{
+    display: flex;
+    border: 1px solid #0000004d;
+    padding: 4px;
+    border-radius: 8px;
+    cursor: pointer;
+    gap: 4px;
+}
+.account-button{
+    width: 140px;
+}
+.icons{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content:space-around;
+}
+
+.cart i {
+    color: #000;
+    font-size: 30px;
+}
+/* MEDIA QUERIES */
+
+@media (max-width: 880px) {
+
+    header {
+        padding: 15px 6%;
+    }
+}

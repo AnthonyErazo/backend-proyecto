@@ -1,0 +1,64 @@
+*,
+*::before,
+*::after {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+    scroll-behavior: smooth;
+}
+
+:root {
+    --bg-color: #ffffff;
+    --text-color: #1E1F4B;
+    --text-color-hover-active: #9893D7;
+    --text-color-active: #453493;
+    --main-font: 1.2rem;
+    --body-color: hsl(207, 4%, 99%);
+    --p-font: 1rem;
+    --c-grey-100: #f4f6f8;
+    --c-grey-200: #e3e3e3;
+    --c-grey-300: #b2b2b2;
+    --c-grey-400: #7b7b7b;
+    --c-grey-500: #3d3d3d;
+    --c-blue-500: #688afd;
+    --theme: #5e27e5;
+    --bs-form-invalid-color: #dc3545;
+    --bs-form-valid-color: #198754;
+    --bs-warning-bg-subtle: #bf8f00;
+    --primary-color: #5d5fef;
+    --primary-color-dark: #4b4dbf;
+    --secondary-color: #131516;
+    --text-dark: #333333;
+    --text-light: #767268;
+    --extra-light: #f8f8f8;
+    --white: #ffffff;
+    --max-width: 1200px;
+
+    --title-color: hsl(207, 4%, 16%);
+
+    /*========== z index ==========*/
+    --z-tooltip: 10;
+}
+
+body,
+input {
+    font-family: "Poppins", sans-serif;
+}
+
+/*=============== SCROLL BAR ===============*/
+::-webkit-scrollbar {
+    width: .6rem;
+    border-radius: .5rem;
+    background-color: hsl(207, 4%, 75%);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: hsl(207, 4%, 65%);
+    border-radius: .5rem;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(207, 4%, 55%);
+}

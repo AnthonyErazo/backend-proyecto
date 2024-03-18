@@ -7,8 +7,8 @@ class ProductsController {
     }
     getProducts = async (req, res) => {
         try {
-            const { limit = 10, page = 1, sort, query } = req.query;
-            const dataProducts = await this.service.getProducts(limit, page, sort, query);
+            const { limit = 10, page = 1, sort, query, term } = req.query;
+            const dataProducts = await this.service.getProducts(limit, page, sort, query, term);
             return res.status(200).json(dataProducts);
         } catch (error) {
             logger.error('Error al obtener productos:', error);

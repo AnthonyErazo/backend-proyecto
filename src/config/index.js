@@ -1,5 +1,3 @@
-const session = require('express-session')
-const MongoStore = require('connect-mongo')
 const MongoSingleton = require('../utils/mongoSingleton')
 const { configObject } = require('./configObject')
 const { logger } = require('../utils/logger')
