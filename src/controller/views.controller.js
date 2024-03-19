@@ -133,6 +133,9 @@ class ViewsController{
             cart:cid
         })
     }
+    forgotPassword=async(req,res)=>{
+        res.render('forgotPassword')
+    }
 }
 
 module.exports=ViewsController

@@ -10,7 +10,8 @@ const {
     github,
     githubCallback,
     logout,
-    current
+    current,
+    forgotPassword
 } = new SessionsController()
 
 const router = Router();
@@ -18,6 +19,7 @@ const router = Router();
 router
     .post('/register', register)
     .post('/login', login)
+    .post('/forgot-password',forgotPassword )
     .get('/github', passport.authenticate('github', { 
         scope: ['user:email'] 
     }), github)

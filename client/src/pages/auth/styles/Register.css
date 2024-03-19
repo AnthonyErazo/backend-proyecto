@@ -23,6 +23,7 @@ h2 {
     margin-bottom: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    cursor: pointer;
 }
 
 .btn-primary {

@@ -36,7 +36,6 @@ class ProductDaoMongo {
         let parsedQuery = {};
         if (query) {
             try {
-                console.log(query)
                 parsedQuery = JSON.parse(query);
             } catch (error) {
                 CustomError.createError({

@@ -9,7 +9,6 @@ function Login() {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const [alert, setAlert] = useState(null);
-    axios.defaults.withCredentials=true; 
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -27,13 +26,14 @@ function Login() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // setLoading(true)
+        setLoading(true)
         const fetchProducts = async () => {
             try {
-                const response = await axios.post(`http://localhost:8080/api/sessions/login`, formData);
-                console.log(response)
+                await axios.post(`http://localhost:8080/api/sessions/login`, formData,{
+                    withCredentials: true 
+                });
                 setLoading(false);
-                // navigate('/cart');
+                navigate('/');
             } catch (error) {
                 console.error(error.response.data.message)
                 const alertError = {
@@ -44,11 +44,11 @@ function Login() {
                     status_code: 400
                 };
                 setAlert(alertError)
-                // setLoading(false);
+                setLoading(false);
+                resetForm();
             }
         };
         fetchProducts();
-        resetForm();
     };
 
     if (loading) return <Loading />

@@ -15,7 +15,8 @@ const {
     productDetail,
     cartDetail,
     addToCart,
-    user
+    user,
+    forgotPassword
 } = new ViewsController()
 
 const router = Router()
@@ -41,6 +42,7 @@ router
     .get('/carts/', authentication, isUser, cartDetail)
     .post('/addToCart',authentication,isUser, addToCart)
     .get('/user',authentication, user)
+    .get('/forgot-password', forgotPassword)
     // .get('*', (req, res) => {
     //     res.redirect('/products');
     // });

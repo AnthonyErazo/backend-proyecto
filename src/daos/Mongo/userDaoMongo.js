@@ -1,3 +1,7 @@
+const CustomError = require('../../utils/error/customErrors.js');
+const { enumActionsErrors } = require('../../utils/error/enumActionsErrors.js');
+const { enumErrors } = require('../../utils/error/errorEnum.js');
+const { generateUserErrorInfo } = require('../../utils/error/generateInfoError.js');
 const { usersModel } = require('./models/user.model.js');
 const { ObjectId } = require('mongoose').Types;
 
@@ -27,7 +31,12 @@ class UserDaoMongo {
                 nextLink: rest.hasNextPage ? `/user?limit=${limit}&page=${rest.nextPage}` : null,
             };
         } else {
-            throw new Error('No hay usuarios disponibles');
+            CustomError.createError({
+                name:"USER ERROR",
+                code:enumErrors.DATABASE_ERROR,
+                message:generateProductErrorInfo(payload,enumActionsErrors.ERROR_GET),
+                cause:'No hay usuarios disponibles',
+            })
         }
     }
     async getBy(filter,notPassword) {
@@ -40,7 +49,12 @@ class UserDaoMongo {
         if (user) {
             return { status: "success", payload: user };
         } else {
-            throw new Error(`Usuario no encontrado`)
+            CustomError.createError({
+                name:"USER ERROR",
+                code:enumErrors.DATABASE_ERROR,
+                message:generateUserErrorInfo(user,enumActionsErrors.ERROR_GET),
+                cause:'Usuario no encontrado',
+            })
         }
     }
     async exists(filter) {

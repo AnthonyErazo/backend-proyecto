@@ -6,6 +6,8 @@ const CustomError = require("../utils/error/customErrors");
 const validateFields = require("../utils/validators");
 const { enumErrors } = require("../utils/error/errorEnum");
 const { logger } = require("../utils/logger");
+const { sendMail } = require('../utils/sendMail');
+const jwt = require('jsonwebtoken')
 
 class SessionsController {
     constructor() {
@@ -49,9 +51,9 @@ class SessionsController {
         }
     }
     login = async (req, res) => {
-        const requieredfield = ['email', 'password'];
-        const userData = validateFields(req.body, requieredfield);
         try {
+            const requieredfield = ['email', 'password'];
+            const userData = validateFields(req.body, requieredfield);
             if (userData.email === configObject.Admin_user_email && userData.password === configObject.Admin_user_password) {
                 const token = createToken({
                     first_name: 'admin',
@@ -63,35 +65,36 @@ class SessionsController {
                     httpOnly: true,
                     secure: true,
                     sameSite: 'lax',
-                    credentials: true 
+                    credentials: true
                 });
+                return res.status(200).json({ message: 'Login successful' });
                 // return res.redirect('/products');
             }
 
             const { payload: userFound } = await userService.getUser({ email: userData.email }, false);
-            
-            if (!userFound || !isValidPassword(userData.password, { password: userFound.password })) CustomError.createError({
-                cause: `Email o contraseña equivocado`,
-                message: `Error al iniciar sesion`,
-                code: enumErrors.INVALID_TYPES_ERROR
-            })
-            
+
+            if (!userFound || !isValidPassword(userData.password, { password: userFound.password })) {
+                CustomError.createError({
+                    cause: `Email o contraseña equivocado`,
+                    message: `Error al iniciar sesion`,
+                    code: enumErrors.INVALID_TYPES_ERROR
+                })
+            }
+
             const token = createToken({ id: userFound._id, role: userFound.role })
-            console.log(configObject.Cookie_auth+' '+token)
             res.cookie(configObject.Cookie_auth, token, {
                 maxAge: 60 * 60 * 1000 * 24,
                 httpOnly: true,
                 secure: true,
-                credentials: true ,
                 sameSite: 'lax',
-                credentials: true 
-            })
+            });
+            return res.status(200).json({ message: 'Login successful' });
             // res.redirect('/products');
         } catch (error) {
             logger.error(error);
             return res.status(500).json({
                 status: 'error',
-                message: 'Error al logear usuario',
+                message: 'Error al iniciar sesion',
                 error: error.message,
                 cause: error.cause
             });
@@ -128,6 +131,34 @@ class SessionsController {
             res.send('datos sensibles')
         } catch (error) {
             logger.error(error);
+        }
+    }
+    forgotPassword = async (req, res) => {
+        try {
+            const { email } = req.body;
+            const user = await userService.getUser({ email }, true);
+
+            const token = jwt.sign({ userId: user._id }, configObject.Jwt_private_key, { expiresIn: '1h' });
+
+            const resetLink = `http://localhost:8080/reset-password?token=${token}`;
+
+            const html = `<div>
+            <h2>Recuperación de contraseña</h2>
+            <p>Haga clic en el siguiente enlace para restablecer su contraseña:</p>
+            <a href="${resetLink}">Restablecer contraseña</a>
+        </div>`;
+
+            sendMail(email, 'Recuperación de contraseña', html);
+
+            return res.status(200).json({ message: 'Correo de restablecimiento enviado exitosamente' });
+        } catch (error) {
+            logger.error(error);
+            return res.status(500).json({
+                status: 'error',
+                message: 'Error al iniciar sesion',
+                error: error.message,
+                cause: error.cause
+            });
         }
     }
 }

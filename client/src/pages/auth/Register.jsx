@@ -15,7 +15,7 @@ function Register() {
         first_name: '',
         last_name: '',
         email: '',
-        birthdate: new Date(),
+        birthdate: '',
         password: ''
     });
 
@@ -31,7 +31,7 @@ function Register() {
             first_name: '',
             last_name: '',
             email: '',
-            birthdate: new Date(),
+            birthdate: '',
             password: ''
         })
     }

@@ -36,6 +36,9 @@ const generateProductErrorInfo = (product, action) => {
 const generateCartErrorInfo = (cart, action) => {
     return generateErrorInfo('cart',cart, action);
 };
+const generateUserErrorInfo = (user, action) => {
+    return generateErrorInfo('user',user, action);
+};
 
 const generateTicketErrorInfo = (ticket, action) => {
     return generateErrorInfo('ticket',ticket, action);
@@ -43,5 +46,6 @@ const generateTicketErrorInfo = (ticket, action) => {
 module.exports = {
     generateProductErrorInfo,
     generateCartErrorInfo,
-    generateTicketErrorInfo
+    generateTicketErrorInfo,
+    generateUserErrorInfo
 }

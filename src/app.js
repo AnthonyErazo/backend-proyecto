@@ -28,7 +28,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static(__dirname + '/public'))
 app.use(cookieParser())
-// app.use(cookieParser(configObject.Cookie_word_secret))
 
 
 
