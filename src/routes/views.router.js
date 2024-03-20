@@ -2,7 +2,7 @@ const handlebars = require('handlebars')
 const { Router } = require('express')
 const { authentication } = require('../middleware/auth.middleware')
 const ViewsController = require('../controller/views.controller')
-const { isAdmin, isUser } = require('../utils/verifiqueRole')
+const { isAdmin, isUser, isPremium } = require('../utils/verifiqueRole')
 const verifyTokenExpiration = require('../utils/verifyTokenExpiration ')
 
 const {
@@ -36,7 +36,7 @@ router
     .get('/register', registerView)
     .get('/logout', logout)
     .get('/home', home)
-    .get('/realtimeproducts',authentication,isAdmin, realtimeProducts)
+    .get('/realtimeproducts',authentication,isAdmin,isPremium, realtimeProducts)
     .get('/chat',authentication,isUser, chat)
     .get('/login',loginView)
     .get('/products/:productId', productDetail)

@@ -110,6 +110,7 @@ function Register() {
                     </div>
                     <button type="submit" className="btn btn-primary">Registrarse</button>
                 </form>
+                <p>¿Olvidaste tu contraseña? <Link to="/auth/reset-password">Restaurar contraseña</Link>.</p>
                 <p>¿Ya tienes una cuenta? <Link to="/auth/login">Inicia sesión aquí</Link>.</p>
                 <p>Regresar a la <Link to="/">Página de Inicio</Link>.</p>
             </div>

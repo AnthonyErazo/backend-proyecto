@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { createBrowserRouter, Route, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import './App.css'
 import Home from './pages/home/Home'
 import Cart from './pages/cart/Cart'
@@ -11,6 +11,7 @@ import Register from './pages/auth/Register'
 import ItemProduct from './pages/home/ItemProduct'
 import SearchPage from './pages/home/SearchPage'
 import Dashboard from './pages/dashboard/Dashboard'
+import ResetPassword from './pages/auth/ResetPassword'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 
@@ -38,7 +39,11 @@ function App() {
       Component: MainLayout,
       children: [
         {
-          path: "",
+          path:'',
+          element: <Navigate to="/home" replace />
+        },
+        {
+          path: "home",
           Component: Home
         },
         {
@@ -57,16 +62,29 @@ function App() {
           path: "dashboard",
           Component: Dashboard
         }
-      ].filter(route => route)
+      ]
     },
     //Autenticacion
     {
-      path:'/auth/login',
-      Component:Login
-    },
-    {
-      path:'/auth/register',
-      Component:Register
+      path:'/auth',
+      children: [
+        {
+          path:'',
+          element: <Navigate to="/auth/login" replace />
+        },
+        {
+          path:'login',
+          Component: Login
+        },
+        {
+          path:'register',
+          Component: Register
+        },
+        {
+          path:'reset-password',
+          Component:ResetPassword
+        }
+      ]
     },
     //Rutas no encontradas
     {

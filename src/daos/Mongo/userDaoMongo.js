@@ -63,6 +63,16 @@ class UserDaoMongo {
     async create(newUser) {
         return await this.model.create(newUser)
     }
+    async changeRole(uid,role) {
+        const existingUser = await this.model.findOne({ _id: new ObjectId(uid) });
+        if (existingUser) {
+            existingUser.role=role;
+            existingUser.save();
+            return { status: "success", message: 'Usuario actualizado correctamente' };
+        } else {
+            throw new Error('Usuario no encontrado')
+        }
+    }
     async update(uid,userUpdate) {
         const existingUser = await this.model.findOne({ _id: new ObjectId(uid) });
 

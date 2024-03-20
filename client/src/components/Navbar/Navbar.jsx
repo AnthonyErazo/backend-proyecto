@@ -1,11 +1,14 @@
 import { Link, useNavigate } from 'react-router-dom'
 import './Navbar.css'
 import { useState } from 'react';
+import axios from 'axios';
 
 function Navbar() {
   const [searchValue, setSearchValue] = useState('');
   const [showCategories, setShowCategories] = useState(false);
   const [showAccount, setShowAccount] = useState(false);
+  const [alert, setAlert] = useState(null);
+  const [loading,setLoading]=useState(false);
   const navigate = useNavigate();
 
   const handleKeyPress = (event) => {
@@ -17,6 +20,31 @@ function Navbar() {
     if(searchValue){
       navigate(`/search/${value}`);
     }
+  }
+  const logoutSession=()=>{
+    setLoading(true)
+        const fetchProducts = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/api/sessions/logout`,{
+                  withCredentials:true
+                });
+                console.log(response)
+                setLoading(false);
+            } catch (error) {
+                console.error(error.response.data.message)
+                const alertError = {
+                    id_toast: new Date().toString(),
+                    message: error.response.data.cause,
+                    duration: 4600,
+                    type: 'error',
+                    status_code: 400
+                };
+                setAlert(alertError)
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
   }
   return (
     <header>
@@ -64,10 +92,10 @@ function Navbar() {
           {showAccount && (
             <div className='account-bar'>
               <ul>
-                <li><Link to='/category1'>My Account</Link></li>
+                <li><Link to='/dashboard'>My Account</Link></li>
                 <li><Link to='/auth/register'>Register</Link></li>
                 <li><Link to='/auth/login'>Login <i className='ri-logout-box-line'></i></Link></li>
-                <li><Link to='/category3'>Logout <i className='ri-logout-box-r-line'></i></Link></li>
+                <li><Link onClick={logoutSession}>Logout <i className='ri-logout-box-r-line'></i></Link></li>
               </ul>
             </div>
           )}

@@ -4,6 +4,7 @@ const cartRouter = require('./carts.router.js')
 const sessionRouter = require('./sessions.router.js')
 const viewsRouter = require('./views.router.js')
 const pruebasRouter = require('./pruebas.router.js')
+const userRouter = require('./user.router.js')
 const { uploader } = require('../utils/uploader.js')
 const { extractTokenData } = require('../middleware/extractTokenData.middleware.js')
 
@@ -19,6 +20,7 @@ router.use('/',extractTokenData,viewsRouter);
 router.use('/api/products', productRouter);
 router.use('/api/carts', cartRouter);
 router.use('/api/sessions', sessionRouter);
+router.use('/api/users', userRouter);
 router.use('/pruebas', pruebasRouter);
 
 module.exports = router
