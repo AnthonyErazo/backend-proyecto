@@ -8,7 +8,7 @@ const usersSchema = Schema({
     birthdate:{type:Date},
     password: String ,
     cart:{type:Schema.Types.ObjectId,ref:'carts'},
-    role: { type: String, default: "user" }
+    role: { type: String, enum: ['user', 'premium', 'admin'], default: 'user' }
 })
 
 

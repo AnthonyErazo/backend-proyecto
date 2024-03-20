@@ -3,6 +3,7 @@ const { Router } = require('express')
 const { authentication } = require('../middleware/auth.middleware')
 const ViewsController = require('../controller/views.controller')
 const { isAdmin, isUser } = require('../utils/verifiqueRole')
+const verifyTokenExpiration = require('../utils/verifyTokenExpiration ')
 
 const {
     loginView,
@@ -16,7 +17,8 @@ const {
     cartDetail,
     addToCart,
     user,
-    forgotPassword
+    forgotPassword,
+    resetPassword
 } = new ViewsController()
 
 const router = Router()
@@ -43,6 +45,7 @@ router
     .post('/addToCart',authentication,isUser, addToCart)
     .get('/user',authentication, user)
     .get('/forgot-password', forgotPassword)
+    .get('/reset-password', verifyTokenExpiration, resetPassword)
     // .get('*', (req, res) => {
     //     res.redirect('/products');
     // });

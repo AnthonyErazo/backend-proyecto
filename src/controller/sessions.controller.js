@@ -161,6 +161,33 @@ class SessionsController {
             });
         }
     }
+    resetPassword = async (req, res) => {
+        const token = req.params.token;
+        const { password } = req.body;
+
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const userId = decoded.userId;
+
+            const user = await userService.getUser({ _id: userId }, false);
+            if (isValidPassword(password, { password: user.password })) {
+                CustomError.createError(
+                    {
+                        cause: `La contraseña no pueden ser iguales`,
+                        message: `Error al resetear contraseña`,
+                        code: enumErrors.INVALID_TYPES_ERROR
+                    }
+                )
+            }
+            user.password = password;
+            await user.save();
+
+            return res.status(200).json({ message: 'Contraseña restablecida con éxito' });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: 'Error al restablecer la contraseña' });
+        }
+    };
 }
 
 module.exports = SessionsController
