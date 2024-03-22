@@ -9,7 +9,7 @@ class UserController {
         try {
             const { uid } = req.params;
             const role=req.body;
-            const user=await this.service.changeRole(uid,role);
+            const user=await this.service.changeRole(uid);
             return res.status(200).json(user);
         } catch (error) {
             logger.error('Error al cambiar role de usuario:', error);

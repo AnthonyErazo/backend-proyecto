@@ -9,7 +9,7 @@ class UserRepository {
     createUser = async (newUser) => await this.dao.create(newUser)
     updateUser = async (uid, userUpdate) => await this.dao.update(uid, userUpdate)
     deleteUser = async (uid) => await this.dao.delete(uid)
-    changeRole = async (uid,role) => await this.dao.changeRole(uid,role)
+    changeRole = async (uid) => await this.dao.changeRole(uid)
 
 }
 
