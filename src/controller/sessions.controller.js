@@ -138,14 +138,14 @@ class SessionsController {
             const { email } = req.body;
             const user = await userService.getUser({ email }, true);
 
-            const token = jwt.sign({ userId: user._id }, configObject.Jwt_private_key, { expiresIn: '1h' });
+            const token = jwt.sign({userId:user.payload._id}, configObject.Jwt_private_key, { expiresIn: '1h' });
 
             const resetLink = `http://localhost:8080/reset-password?token=${token}`;
 
             const html = `<div>
             <h2>Recuperación de contraseña</h2>
             <p>Haga clic en el siguiente enlace para restablecer su contraseña:</p>
-            <a href="${resetLink}">Restablecer contraseña</a>
+            <a href="${resetLink}" method="GET" >Restablecer contraseña</a>
         </div>`;
 
             sendMail(email, 'Recuperación de contraseña', html);
@@ -162,15 +162,14 @@ class SessionsController {
         }
     }
     resetPassword = async (req, res) => {
-        const token = req.params.token;
-        const { password } = req.body;
-
         try {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const token = req.params.token;
+            const  {password}  = req.body;
+            const decoded = jwt.verify(token, configObject.Jwt_private_key);
             const userId = decoded.userId;
 
-            const user = await userService.getUser({ _id: userId }, false);
-            if (isValidPassword(password, { password: user.password })) {
+            const {payload} = await userService.getUser({ _id: userId }, false);
+            if (isValidPassword(password, { password: payload.password })) {
                 CustomError.createError(
                     {
                         cause: `La contraseña no pueden ser iguales`,
@@ -179,8 +178,7 @@ class SessionsController {
                     }
                 )
             }
-            user.password = password;
-            await user.save();
+            await userService.updateUser(userId,{password:createHash(password)})
 
             return res.status(200).json({ message: 'Contraseña restablecida con éxito' });
         } catch (error) {

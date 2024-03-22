@@ -45,7 +45,7 @@ router
     .post('/addToCart',authentication,isUser, addToCart)
     .get('/user',authentication, user)
     .get('/forgot-password', forgotPassword)
-    .get('/reset-password', verifyTokenExpiration, resetPassword)
+    .get('/reset-password', resetPassword)
     // .get('*', (req, res) => {
     //     res.redirect('/products');
     // });

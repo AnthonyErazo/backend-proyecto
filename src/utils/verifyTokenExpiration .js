@@ -10,7 +10,7 @@ const verifyTokenExpiration = (req, res, next) => {
     jwt.verify(token, process.env.JWT_SECRET, options, (err, decoded) => {
         if (err) {
             console.error(err);
-            res.redirect('/forgotPassword');
+            res.redirect('/forgot-password');
         } else {
             next();
         }

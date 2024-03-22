@@ -1,4 +1,5 @@
 const { configObject } = require('../config/configObject');
+const jwt = require('jsonwebtoken')
 const { productsService, messageService, userService, cartsService } = require('../repositories')
 
 const dataUser = async (req, res) => {
@@ -137,13 +138,16 @@ class ViewsController {
         res.render('forgotPassword')
     }
     resetPassword = async (req, res) => {
-        const token = req.params.token;
+        const token = req.query.token;
         try {
-            jwt.verify(token, process.env.JWT_SECRET);
+            const decoded = jwt.verify(token, configObject.Jwt_private_key);
+            if (Date.now() >= decoded.exp * 1000) {
+                throw new Error('El token ha expirado');
+            }
             res.render('resetPassword', { token });
         } catch (error) {
             console.error(error);
-            res.render('forgotPassword', { token });
+            res.redirect('/forgot-password');
         }
     }
 }
