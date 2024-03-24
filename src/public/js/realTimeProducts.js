@@ -3,12 +3,12 @@ socket.on('connect', () => {
     console.log('Conexión establecida')
 })
 
-socket.on('newProducts',async (products) => {
+socket.on('newProducts',async (products,idUser) => {
     try {
         const tableProducts = document.getElementById('tableProducts')
         tableProducts.innerHTML = ''
 
-        products.forEach((product) => {
+        products?.forEach((product) => {
             const row = document.createElement('tr')
             row.innerHTML = `
             <td>${product.title}</td>
@@ -16,7 +16,7 @@ socket.on('newProducts',async (products) => {
             <td>${product.stock}</td>
             <td>${product.description}</td>
             <td>
-                <button onclick="deleteProduct('${product._id}')">Borrar</button>
+                <button onclick="deleteProduct('${product._id}','${idUser}')">Borrar</button>
             </td>
             `
             tableProducts.appendChild(row)
@@ -26,7 +26,7 @@ socket.on('newProducts',async (products) => {
     }
 })
 
-function addProduct() {
+function addProduct(idUser) {
     const form = document.getElementById('addProductForm')
     const title = form.elements.title.value
     const description = form.elements.description.value
@@ -35,12 +35,13 @@ function addProduct() {
     const code = form.elements.code.value
     const stock = form.elements.stock.value
     const category = form.elements.category.value
+    const owner = idUser||'admin'
 
-    socket.emit('addProduct', { code, title, description, price, stock, thumbnail, category })
+    socket.emit('addProduct', { code, title, description, price, stock, thumbnail, category,owner })
 
     form.reset()
 }
 
-function deleteProduct(id) {
-    socket.emit('eliminateProduct', id)
+function deleteProduct(id,idUser) {
+    socket.emit('eliminateProduct', id,idUser)
 }

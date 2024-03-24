@@ -7,7 +7,8 @@ class ProductsRepository {
     getProduct    = async (filter) => await this.dao.getBy(filter)
     createProduct = async (newProduct,owner) => await this.dao.create(newProduct,owner)
     updateProduct = async (pid, productToUpdate) => await this.dao.update(pid, productToUpdate)
-    deleteProduct = async (pid) => await this.dao.delete(pid)
+    deleteProduct = async (pid,idUser) => await this.dao.delete(pid,idUser)
+    isProductOwnedByUser=async (prdductId,idUser)=>await this.dao.isProductOwnedByUser(prdductId,idUser)
 
 }
 

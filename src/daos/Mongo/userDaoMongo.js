@@ -65,10 +65,10 @@ class UserDaoMongo {
     }
     async changeRole(uid) {
         const existingUser = await this.model.findOne({ _id: new ObjectId(uid) });
-        if(existingUser){
+        if(!existingUser){
             throw new Error('Usuario no encontrado')
         }
-        if (existingUser.role='user') {
+        if (existingUser.role==='user') {
             existingUser.role='premium';
         } else {
             existingUser.role='user';

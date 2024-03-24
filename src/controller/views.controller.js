@@ -1,6 +1,7 @@
 const { configObject } = require('../config/configObject');
 const jwt = require('jsonwebtoken')
-const { productsService, messageService, userService, cartsService } = require('../repositories')
+const { productsService, messageService, userService, cartsService } = require('../repositories');
+const { logger } = require('../utils/logger');
 
 const dataUser = async (req, res) => {
     if (req.user) {
@@ -50,11 +51,13 @@ class ViewsController {
     realtimeProducts = async (req, res) => {
         const user = await dataUser(req, res)
         const { payload } = await productsService.getProducts();
+        const idUser = req.user.id ? req.user.id : 'admin';
         res.render('realTimeProducts', {
             title: 'Productos en tiempo real',
+            idUser,
             products: payload,
             userName: user.first_name,
-            userRole: user.role,
+            userRole: user.role
         })
     }
     chat = async (req, res) => {
@@ -87,10 +90,18 @@ class ViewsController {
         })
     }
     addToCart = async (req, res) => {
-        const { productId } = req.body;
-        const { cart: idCart } = await dataUser(req, res)
-        const addProductCart = await cartsService.addProductByCartId(idCart, productId);
-        res.status(200).json(addProductCart);
+        try {
+            const { productId } = req.body;
+            const { cart: idCart } = await dataUser(req, res)
+            const idUser=req.user.id
+            await productsService.isProductOwnedByUser(productId, idUser)
+            const addProductCart = await cartsService.addProductByCartId(idCart, productId);
+            res.status(200).json(addProductCart);
+        } catch (err) {
+            logger.error(err)
+            res.status(500).json({message:"Ocurrio un error al agregar al carrit"})
+        }
+
     }
     user = async (req, res) => {
         const user = await dataUser(req, res)
@@ -146,7 +157,7 @@ class ViewsController {
             }
             res.render('resetPassword', { token });
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             res.redirect('/forgot-password');
         }
     }

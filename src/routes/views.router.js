@@ -2,8 +2,8 @@ const handlebars = require('handlebars')
 const { Router } = require('express')
 const { authentication } = require('../middleware/auth.middleware')
 const ViewsController = require('../controller/views.controller')
-const { isAdmin, isUser, isPremium } = require('../utils/verifiqueRole')
-const verifyTokenExpiration = require('../utils/verifyTokenExpiration ')
+const { isUserOrPremium,isUser, isAdminOrPremium } = require('../utils/verifiqueRole')
+
 
 const {
     loginView,
@@ -36,13 +36,13 @@ router
     .get('/register', registerView)
     .get('/logout', logout)
     .get('/home', home)
-    .get('/realtimeproducts',authentication,isAdmin,isPremium, realtimeProducts)
+    .get('/realtimeproducts',authentication,isAdminOrPremium, realtimeProducts)
     .get('/chat',authentication,isUser, chat)
     .get('/login',loginView)
     .get('/products/:productId', productDetail)
-    .get('/carts/:cid',authentication,isUser, cartDetail)
-    .get('/carts/', authentication, isUser, cartDetail)
-    .post('/addToCart',authentication,isUser, addToCart)
+    .get('/carts/:cid',authentication,isUserOrPremium, cartDetail)
+    .get('/carts/', authentication, isUserOrPremium, cartDetail)
+    .post('/addToCart',authentication,isUserOrPremium, addToCart)
     .get('/user',authentication, user)
     .get('/forgot-password', forgotPassword)
     .get('/reset-password', resetPassword)

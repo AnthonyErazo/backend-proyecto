@@ -14,18 +14,18 @@ function socketIOfunction(httpServer) {
             try {
                 await productsService.createProduct(data)
                 const newProducts = await productsService.getProducts()
-                io.emit('newProducts', newProducts.data)
+                io.emit('newProducts', newProducts.payload,data.owner)
             } catch (error) {
                 logger.error('Error al agregar producto:', error.message);
                 socket.emit('error', { message: 'Error al agregar producto' });
             }
         })
         //Eliminar productos en tiempo real
-        socket.on('eliminateProduct', async (id) => {
+        socket.on('eliminateProduct', async (id,idUser) => {
             try {
-                await productsService.deleteProduct(id)
+                await productsService.deleteProduct(id,idUser)
                 const newProducts = await productsService.getProducts()
-                io.emit('newProducts', newProducts.data)
+                io.emit('newProducts', newProducts.payload,idUser)
             } catch (error) {
                 logger.error('Error al eliminar producto:', error.message);
                 socket.emit('error', { message: 'Error al eliminar producto' });

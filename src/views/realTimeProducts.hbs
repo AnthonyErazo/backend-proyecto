@@ -18,7 +18,7 @@
                     <td>{{ this.stock }}</td>
                     <td>{{ this.description }}</td>
                     <td>
-                        <button onclick="deleteProduct('{{this._id}}')">Borrar</button>
+                        <button onclick="deleteProduct('{{this._id}}','{{../idUser}}')">Borrar</button>
                     </td>
                 </tr>
                 {{/each}}
@@ -47,7 +47,7 @@
                     <input type="text" id="category" name="category" placeholder="Ingrese categoria" required>
                 </div>
                 <div>
-                    <button type="button" onclick="addProduct()">Agregar</button>
+                    <button type="button" onclick="addProduct('{{idUser}}')">Agregar</button>
                 </div>
             </form>
         </div>

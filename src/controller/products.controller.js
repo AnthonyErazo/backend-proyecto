@@ -38,7 +38,6 @@ class ProductsController {
     addProduct = async (req, res) => {
         try {
             const product = req.body;
-            console.log(req.user)
             const newProducts = await this.service.createProduct(product);
             return res.status(200).json(newProducts);
         } catch (error) {

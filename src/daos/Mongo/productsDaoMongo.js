@@ -1,4 +1,4 @@
-const { ObjectId } = require('mongoose').Types;
+const { Types } = require('mongoose');
 const { productModel } = require('./models/products.model');
 const CustomError = require('../../utils/error/customErrors');
 const { enumErrors } = require('../../utils/error/errorEnum');
@@ -10,24 +10,24 @@ class ProductDaoMongo {
         this.model = productModel;
     }
 
-    async get(limit = 10, page = 1, sort, query,term) {
-        
+    async get(limit = 10, page = 1, sort, query, term) {
+
         const options = {
             limit: parseInt(limit),
             page: parseInt(page),
             lean: true,
         };
 
-        
+
 
         if (sort) {
             const parsedSort = parseInt(sort);
             if (![1, -1].includes(parsedSort)) {
                 CustomError.createError({
-                    name:"PRODUCT ERROR",
-                    code:enumErrors.INVALID_TYPES_ERROR,
-                    message:generateProductErrorInfo(1,enumActionsErrors.ERROR_GET),
-                    cause:"El parámetro sort debe ser 1 o -1",
+                    name: "PRODUCT ERROR",
+                    code: enumErrors.INVALID_TYPES_ERROR,
+                    message: generateProductErrorInfo(1, enumActionsErrors.ERROR_GET),
+                    cause: "El parámetro sort debe ser 1 o -1",
                 })
             }
             options.sort = { price: parsedSort };
@@ -39,10 +39,10 @@ class ProductDaoMongo {
                 parsedQuery = JSON.parse(query);
             } catch (error) {
                 CustomError.createError({
-                    name:"PRODUCT ERROR",
-                    code:enumErrors.INVALID_TYPES_ERROR,
-                    message:generateProductErrorInfo(1,enumActionsErrors.ERROR_GET),
-                    cause:"Error al analizar el parámetro de consulta JSON",
+                    name: "PRODUCT ERROR",
+                    code: enumErrors.INVALID_TYPES_ERROR,
+                    message: generateProductErrorInfo(1, enumActionsErrors.ERROR_GET),
+                    cause: "Error al analizar el parámetro de consulta JSON",
                 })
             }
         }
@@ -62,30 +62,30 @@ class ProductDaoMongo {
                 nextLink: rest.hasNextPage ? `/products?limit=${limit}&page=${rest.nextPage}` : null,
             };
         } else {
-            let cause="No hay productos disponibles"
-            if(term){
-                cause=`No se encontraron resultados para '${term}'`
+            let cause = "No hay productos disponibles"
+            if (term) {
+                cause = `No se encontraron resultados para '${term}'`
             }
             CustomError.createError({
-                name:"PRODUCT ERROR",
-                code:enumErrors.DATABASE_ERROR,
-                message:generateProductErrorInfo(payload,enumActionsErrors.ERROR_GET),
+                name: "PRODUCT ERROR",
+                code: enumErrors.DATABASE_ERROR,
+                message: generateProductErrorInfo(payload, enumActionsErrors.ERROR_GET),
                 cause,
             })
         }
     };
 
     async getBy(filter) {
-        const product = await this.model.findOne({status:true,...filter}).lean();
+        const product = await this.model.findOne({ status: true, ...filter }).lean();
 
         if (product) {
             return { status: "success", payload: product };
         } else {
             CustomError.createError({
-                name:"PRODUCT ERROR",
-                code:enumErrors.DATABASE_ERROR,
-                message:generateProductErrorInfo(product,enumActionsErrors.ERROR_GET),
-                cause:"No hay productos disponibles",
+                name: "PRODUCT ERROR",
+                code: enumErrors.DATABASE_ERROR,
+                message: generateProductErrorInfo(product, enumActionsErrors.ERROR_GET),
+                cause: "No hay productos disponibles",
             })
         }
 
@@ -99,15 +99,16 @@ class ProductDaoMongo {
             code = "",
             stock = 0,
             status = true,
-            category = ""
+            category = "",
+            owner = 'admin'
         } = product;
 
-        if (!(title && description && price && code && stock && category)) {
+        if (!(title && description && price && code && stock && category && owner)) {
             CustomError.createError({
-                name:"PRODUCT ERROR",
-                code:enumErrors.INVALID_TYPES_ERROR,
-                message:generateProductErrorInfo(product,enumActionsErrors.ERROR_ADD),
-                cause:"Todos los campos ingresados son obligatorios.",
+                name: "PRODUCT ERROR",
+                code: enumErrors.INVALID_TYPES_ERROR,
+                message: generateProductErrorInfo(product, enumActionsErrors.ERROR_ADD),
+                cause: "Todos los campos ingresados son obligatorios.",
             })
         }
         const newProduct = await this.model.create(product);
@@ -123,10 +124,10 @@ class ProductDaoMongo {
         if (existingProduct) {
             if (updatedFields.id && updatedFields.id !== pid.toString()) {
                 CustomError.createError({
-                    name:"PRODUCT ERROR",
-                    code:enumErrors.INVALID_TYPES_ERROR,
-                    message:generateProductErrorInfo(existingProduct,enumActionsErrors.ERROR_UPDATE),
-                    cause:"No se permite modificar el campo 'id'",
+                    name: "PRODUCT ERROR",
+                    code: enumErrors.INVALID_TYPES_ERROR,
+                    message: generateProductErrorInfo(existingProduct, enumActionsErrors.ERROR_UPDATE),
+                    cause: "No se permite modificar el campo 'id'",
                 })
             }
             const allowedProperties = ['title', 'description', 'price', 'thumbnail', 'code', 'stock', 'status', 'category'];
@@ -142,37 +143,62 @@ class ProductDaoMongo {
                 return { status: "success", message: 'Producto actualizado correctamente' };
             } else {
                 CustomError.createError({
-                    name:"PRODUCT ERROR",
-                    code:enumErrors.DATABASE_ERROR,
-                    message:generateProductErrorInfo(existingProduct,enumActionsErrors.ERROR_UPDATE),
-                    cause:"Ningún cambio realizado en el producto",
+                    name: "PRODUCT ERROR",
+                    code: enumErrors.DATABASE_ERROR,
+                    message: generateProductErrorInfo(existingProduct, enumActionsErrors.ERROR_UPDATE),
+                    cause: "Ningún cambio realizado en el producto",
                 })
             }
         } else {
             CustomError.createError({
-                name:"PRODUCT ERROR",
-                code:enumErrors.DATABASE_ERROR,
-                message:generateProductErrorInfo(existingProduct,enumActionsErrors.ERROR_UPDATE),
-                cause:"Producto no encontrado",
+                name: "PRODUCT ERROR",
+                code: enumErrors.DATABASE_ERROR,
+                message: generateProductErrorInfo(existingProduct, enumActionsErrors.ERROR_UPDATE),
+                cause: "Producto no encontrado",
             })
         }
 
     };
 
-    async delete(pid) {
-        const ProductDelete = await this.model.findOneAndDelete({ _id: pid }).lean()
+    async delete(pid, idUser) {
+        let ProductDelete
+        if (!idUser) {
+            CustomError.createError({
+                name: "PRODUCT ERROR",
+                code: enumErrors.INVALID_TYPES_ERROR,
+                message: 'Error al eliminar producto',
+                cause: "Error al buscar el usuario por id",
+            })
+        }
+        if (idUser == 'admin') {
+            ProductDelete = await this.model.findOneAndDelete({ _id: pid }).lean()
+        } else {
+            ProductDelete = await this.model.findOneAndDelete({ _id: pid, owner: idUser }).lean()
+        }
         if (ProductDelete) {
-            return { status: "success", message: 'Producto eliminado correctamente', payload:ProductDelete }
+            return { status: "success", message: 'Producto eliminado correctamente', payload: ProductDelete }
         } else {
             CustomError.createError({
-                name:"PRODUCT ERROR",
-                code:enumErrors.DATABASE_ERROR,
-                message:generateProductErrorInfo(ProductDelete,enumActionsErrors.ERROR_DELETE),
-                cause:"Producto no encontrado",
+                name: "PRODUCT ERROR",
+                code: enumErrors.DATABASE_ERROR,
+                message: generateProductErrorInfo(ProductDelete, enumActionsErrors.ERROR_DELETE),
+                cause: "Producto no encontrado",
             })
         }
 
     }
+    async isProductOwnedByUser(productId, idUser) {
+        const product = await this.model.findOne({ _id: productId}).lean();
+        if(product.owner===idUser){
+            CustomError.createError({
+                name: "PRODUCT ERROR",
+                code: enumErrors.INVALID_OPERATION_ERROR,
+                message: "No puedes realizar esta acción en este producto",
+                cause: "El producto no puede ser propiedad del usuario que intenta realizar la acción",
+            });
+        }
+    }
+    
 }
 
 exports.ProductMongo = ProductDaoMongo;

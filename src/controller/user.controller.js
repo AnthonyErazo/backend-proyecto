@@ -8,7 +8,6 @@ class UserController {
     userRoleChange=async(req,res)=>{
         try {
             const { uid } = req.params;
-            const role=req.body;
             const user=await this.service.changeRole(uid);
             return res.status(200).json(user);
         } catch (error) {

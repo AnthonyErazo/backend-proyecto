@@ -87,6 +87,7 @@ class SessionsController {
                 httpOnly: true,
                 secure: true,
                 sameSite: 'lax',
+                credentials: true
             });
             return res.status(200).json({ message: 'Login successful' });
             // res.redirect('/products');
