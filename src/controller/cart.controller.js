@@ -1,4 +1,4 @@
-const { productsService, cartsService, ticketService,userService } = require('../repositories');
+const { productsService, cartsService, ticketService, userService } = require('../repositories');
 const { logger } = require('../utils/logger');
 const { sendMail } = require('../utils/sendMail');
 
@@ -13,11 +13,11 @@ class CartsController {
             return res.status(200).json(dataCart);
         } catch (error) {
             logger.error('Error al obtener productos del carrito:', error);
-            return res.status(500).json({ 
-                status: 'error', 
-                message: 'Error al obtener productos del carrito.', 
+            return res.status(500).json({
+                status: 'error',
+                message: 'Error al obtener productos del carrito.',
                 error: error.message,
-                causer:error.cause 
+                causer: error.cause
             });
         }
     }
@@ -27,11 +27,11 @@ class CartsController {
             return res.status(200).json(newCart);
         } catch (error) {
             logger.error('Error al crear carrito:', error);
-            return res.status(500).json({ 
-                status: 'error', 
-                message: 'Error al crear carrito.', 
+            return res.status(500).json({
+                status: 'error',
+                message: 'Error al crear carrito.',
                 error: error.message,
-                causer:error.cause 
+                causer: error.cause
             });
         }
     }
@@ -43,11 +43,11 @@ class CartsController {
             return res.status(200).json(newCart);
         } catch (error) {
             logger.error('Error al agregar producto al carrito:', error);
-            return res.status(500).json({ 
-                status: 'error', 
-                message: 'Error al agregar producto al carrito.', 
+            return res.status(500).json({
+                status: 'error',
+                message: 'Error al agregar producto al carrito.',
                 error: error.message,
-                causer:error.cause 
+                causer: error.cause
             });
         }
     }
@@ -58,11 +58,11 @@ class CartsController {
             return res.status(200).json(newCart);
         } catch (error) {
             logger.error('Error al agregar producto al carrito:', error);
-            return res.status(500).json({ 
-                status: 'error', 
-                message: 'Error al remover producto del carrito.', 
+            return res.status(500).json({
+                status: 'error',
+                message: 'Error al remover producto del carrito.',
                 error: error.message,
-                causer:error.cause 
+                causer: error.cause
             });
         }
     }
@@ -77,11 +77,11 @@ class CartsController {
             return res.status(200).json(newCart);
         } catch (error) {
             logger.error('Error al agregar producto al carrito:', error);
-            return res.status(500).json({ 
-                status: 'error', 
-                message: 'Error al actualizar productos del carrito.', 
+            return res.status(500).json({
+                status: 'error',
+                message: 'Error al actualizar productos del carrito.',
                 error: error.message,
-                causer:error.cause 
+                causer: error.cause
             });
         }
     }
@@ -93,11 +93,11 @@ class CartsController {
             return res.status(200).json(newCart);
         } catch (error) {
             logger.error('Error al agregar producto al carrito:', error);
-            return res.status(500).json({ 
-                status: 'error', 
-                message: 'Error al actualizar cantidad de producto al carrito.', 
+            return res.status(500).json({
+                status: 'error',
+                message: 'Error al actualizar cantidad de producto al carrito.',
                 error: error.message,
-                causer:error.cause 
+                causer: error.cause
             });
         }
     }
@@ -108,31 +108,33 @@ class CartsController {
             return res.status(200).json(newCart);
         } catch (error) {
             logger.error('Error al agregar producto al carrito:', error);
-            return res.status(500).json({ 
-                status: 'error', 
-                message: 'Error al remover todos los productos del carrito.', 
+            return res.status(500).json({
+                status: 'error',
+                message: 'Error al remover todos los productos del carrito.',
                 error: error.message,
-                causer:error.cause 
+                causer: error.cause
             });
         }
     }
     purchaseCart = async (req, res) => {
         try {
             const { cid } = req.params;
-            const {id}=req.user
-            const {payload}=await userService.getUser({_id:id})
+            const id = req.user ? req.user.id : null;
+            const data = id ? await userService.getUser({ _id: id }) : null;
+            const email = id ? data.payload.email : req.body;
 
             const cartResponse = await this.service.getProductsByCartId(cid);
-            const ticket = await ticketService.createTicket(cid,cartResponse,payload.email);
+            const ticket = await ticketService.createTicket(cid, cartResponse, email);
+            await this.service.updateProductsInCart(cid, ticket.productsNotProcessed);
 
             return res.status(200).json(ticket);
         } catch (error) {
             logger.error('Error al finalizar la compra:', error);
-            return res.status(500).json({ 
-                status: 'error', 
-                message: 'Error al finalizar la compra', 
+            return res.status(500).json({
+                status: 'error',
+                message: 'Error al finalizar la compra',
                 error: error.message,
-                causer:error.cause 
+                causer: error.cause
             });
         }
     }

@@ -12,14 +12,14 @@ class CartDaoMongo {
 
     async create() {
         const newCart = await this.model.create({});
-        return { success: true, data: newCart };
+        return { success: "success", data: newCart };
     }
 
     async getProductsBy(cid) {
         const cart = await this.model.findOne({ _id: new ObjectId(cid) }).lean();
 
         if (cart) {
-            return { success: true, data: cart };
+            return { success: "success", data: cart };
         } else {
             CustomError.createError({
                 name:"CART ERROR",
@@ -53,10 +53,10 @@ class CartDaoMongo {
                 })
             }
 
-            return { success: true, data: newCart, message: 'Producto añadido al carrito correctamente' };
+            return { success: "success", data: newCart, message: 'Producto añadido al carrito correctamente' };
         }
 
-        return { success: true, data: cart, message: 'Producto añadido al carrito correctamente' };
+        return { success: "success", data: cart, message: 'Producto añadido al carrito correctamente' };
     }
 
     async removeProductBy(cid, pid) {
@@ -65,7 +65,7 @@ class CartDaoMongo {
             { $pull: { products: { product: new ObjectId(pid) } } }
         );
         if (result.modifiedCount > 0) {
-            return { success: true, result, message: 'Producto eliminado del carrito correctamente' };
+            return { success: "success", result, message: 'Producto eliminado del carrito correctamente' };
         } else {
             CustomError.createError({
                 name:"CART ERROR",
@@ -83,7 +83,7 @@ class CartDaoMongo {
         );
 
         if (result.modifiedCount > 0) {
-            return { success: true, message: 'Todos los productos fueron eliminados del carrito correctamente' };
+            return { success: "success", message: 'Todos los productos fueron eliminados del carrito correctamente' };
         } else {
             CustomError.createError({
                 name:"CART ERROR",
@@ -110,7 +110,7 @@ class CartDaoMongo {
             })
         }
 
-        return { success: true, data: cart, message: 'Cantidad del producto actualizada correctamente' };
+        return { success: "success", data: cart, message: 'Cantidad del producto actualizada correctamente' };
     }
 
     async updateProductsInCart(cid, updatedProducts) {
@@ -132,7 +132,7 @@ class CartDaoMongo {
     
         updatedCart = await updatedCart.save();
 
-        return { success: true, data: updatedCart, message: 'Productos en el carrito actualizados correctamente' };
+        return { success: "success", data: updatedCart, message: 'Productos en el carrito actualizados correctamente' };
     }
 
 

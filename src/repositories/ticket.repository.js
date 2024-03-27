@@ -9,7 +9,6 @@ class TicketRepository {
     getTicket = async (filter) => await this.dao.getBy(filter)
     createTicket = async (cid,cart, email) => {
         const ticket= await this.dao.create(cart, email)
-        await this.service.updateProductsInCart(cid, ticket.productsNotProcessed);
         const to = ticket.payload.purchaser
         const subject = 'Tickect generado'
         const html = `<div>

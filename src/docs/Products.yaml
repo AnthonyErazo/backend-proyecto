@@ -1,0 +1,383 @@
+paths:
+  /api/products/:
+    get:
+      summary: Obtiene todos los productos
+      tags:
+        - Products
+      parameters: 
+        - name: limit
+          in: query
+          description: El limite de productos a traer, por defecto 10
+          example: 10
+          schema: 
+            type: number
+        - name: page
+          in: query
+          description: Pagina de productos a traer, por defecto 1
+          example: 1
+          schema: 
+            type: number
+        - name: sort
+          in: query
+          description: Orden de los productos a traer (1 ascendente y -1 descendente)
+          example: 1
+          schema: 
+            type: number
+        - name: query
+          in: query
+          description: 'Parametro de busqueda de productos (Ejemplo: { "status": true })'
+          example: '{ "status": true }'
+          schema: 
+            type: string
+        - name: term
+          in: query
+          description: 'Palabra de productos a buscar (Ejemplo: "Iphone")'
+          schema: 
+            type: string
+      responses:
+        "200":
+          description: Los productos fueron obtenidos correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Estado de la respuesta.
+                    example: success
+                  payload:
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/Product'
+                  totalDocs:
+                    type: number
+                    description: Total de documentos encontrados.
+                    example: 20
+                  limit:
+                    type: number
+                    description: Límite de documentos por página.
+                    example: 10
+                  totalPages:
+                    type: number
+                    description: Total de páginas disponibles.
+                    example: 2
+                  page:
+                    type: number
+                    description: Página actual.
+                    example: 1
+                  pagingCounter:
+                    type: number
+                    description: Contador de páginas.
+                    example: 1
+                  hasPrevPage:
+                    type: boolean
+                    description: Existe la página anterior.
+                    example: false
+                  hasNextPage:
+                    type: boolean
+                    description: Existe la página siguiente.
+                    example: true
+                  prevPage:
+                    type: number
+                    description: Página anterior.
+                    example: null
+                  nextPage:
+                    type: number
+                    description: Página siguiente.
+                    example: 2
+                  prevLink:
+                    type: string
+                    description: Url de la página anterior.
+                    example: null
+                  nextLink:
+                    type: string
+                    description: Url de la página siguiente.
+                    example: '/products?limit=10&page=2'
+        "500":  
+          description: Error interno del server, usualmente por query defectuosa.
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+    post:
+      summary: Agregar un producto
+      tags:
+        - Products
+      requestBody: 
+        required: true
+        content:
+          application/json:
+            schema: 
+              $ref: "#/components/requestBodies/Product"
+      responses:
+        "200":
+          description: El producto fue agregado correctamente
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                    status:
+                      type: string
+                      description: Estado de la respuesta.
+                      example: success
+                    payload:
+                      items: 
+                        $ref: '#/components/schemas/Product'
+        "500":  
+          description: Error interno del server, usualmente por query defectuosa.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/products/{pid}:
+    get:
+      summary: Obtener un producto por su Id
+      tags:
+        - Products
+      parameters: 
+        - name: pid
+          in: path
+          required: true
+          description: El id del producto que desea solicitar
+          schema: 
+            type: string
+      responses:
+        "200":
+          description: El producto fue obtenido correctamente
+          content: 
+            application/json:
+              schema: 
+                type: object
+                properties:
+                    status:
+                      type: string
+                      description: Estado de la respuesta.
+                      example: success
+                    payload:
+                      items: 
+                        $ref: '#/components/schemas/Product'
+        "500":  
+          description: Error interno del server, usualmente por query defectuosa.
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+    put:
+      summary: Actualizar un producto por su Id
+      tags:
+        - Products
+      parameters: 
+        - name: pid
+          in: path
+          required: true
+          description: El id del producto que desea actualizar
+          schema: 
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              $ref: "#/components/requestBodies/updateProduct"
+      responses:
+        "200":
+          description: El producto fue actualizado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Estado de la respuesta.
+                    example: success
+                  message:
+                    type: string
+                    description: Mensaje de la respuesta.
+                    example: Se realizo la accion correctamente.
+        "500":  
+          description: Error interno del server, usualmente por query defectuosa.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Eliminar un producto por su Id
+      tags:
+        - Products
+      parameters: 
+        - name: pid
+          in: path
+          required: true
+          description: El id del producto que desea eliminar
+          schema: 
+            type: string
+      responses:
+        "200":
+          description: El producto fue eliminado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Estado de la respuesta.
+                    example: success
+                  message:
+                    type: string
+                    description: Mensaje de la respuesta.
+                    example: Se realizo la accion correctamente.
+                  payload:
+                    items: 
+                        $ref: '#/components/schemas/Product'
+        "500":  
+          description: Error interno del server, usualmente por query defectuosa.
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/ErrorResponse'
+
+
+
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Estado de la respuesta.
+        message:
+          type: string
+          description: Mensaje de la respuesta.
+        error:
+          type: string
+          description: El error producido.
+        cause:
+          type: string
+          description: Causa del error.
+      example:
+        status: 'error'
+        message: Error al realizar accion en producto.
+        error: 'One or more properties were incomplete or not valid'
+        cause: Todos los campos ingresados son obligatorios.
+    Product: 
+      type: object
+      properties: 
+        _id: 
+          type: string
+          description: Id autogenerados de Mongo.
+        title: 
+          type: string
+          description: Titulo del producto.
+        description: 
+          type: string
+          description: Descripcion del producto.
+        price: 
+          type: number
+          description: Precio del producto.
+        thumbnail: 
+          type: array
+          description: Array de imagenes del producto.
+        code: 
+          type: number
+          description: Codigo del producto.
+        stock: 
+          type: number
+          description: Stock del producto.
+        status: 
+          type: boolean
+          description: Estado del producto.
+        category: 
+          type: string
+          description: Categoria del producto.
+        owner: 
+          type: string
+          description: Id del usuario o admin que creo el producto.
+      example:
+        _id: ObjectId("fajsñldf-.sadfjasa.asdfjasldfa")
+        title: Producto 1
+        description: Descripcion del producto
+        price: 50
+        thumbnail: ['link de imagen 1','link de imagen 2'] 
+        code: 89099  
+        stock: 50 
+        status: true 
+        category: Categoria de producto 
+        owner: fajsñldfdasdsadfjasa.asdfjasldfa
+  requestBodies: 
+    updateProduct: 
+      type: object
+      properties:  
+        title: 
+          type: string
+          description: Titulo del producto.
+        description: 
+          type: string
+          description: Descripcion del producto.
+        price: 
+          type: number
+          description: Precio del producto.
+        thumbnail: 
+          type: array
+          description: Array de imagenes del producto.
+        stock: 
+          type: number
+          description: Stock del producto.
+        status: 
+          type: boolean
+          description: Estado del producto.
+        category: 
+          type: string
+          description: Categoria del producto.
+      example: 
+        title: Producto 1
+        description: Descripcion del producto
+        price: 50
+        thumbnail: ['link de imagen 1','link de imagen 2']
+        stock: 50 
+        status: true 
+        category: Categoria de producto
+    Product: 
+      type: object
+      properties:
+        title: 
+          type: string
+          description: Titulo del producto.
+        description: 
+          type: string
+          description: Descripcion del producto.
+        price: 
+          type: number
+          description: Precio del producto.
+        thumbnail: 
+          type: array
+          description: Array de imagenes del producto.
+        code: 
+          type: number
+          description: Codigo del producto.
+        stock: 
+          type: number
+          description: Stock del producto.
+        status: 
+          type: boolean
+          description: Estado del producto.
+        category: 
+          type: string
+          description: Categoria del producto.
+        owner: 
+          type: string
+          description: Id del usuario o admin que creo el producto.
+      example:
+        title: Producto 1
+        description: Descripcion del producto
+        price: 50
+        thumbnail: ['link de imagen 1','link de imagen 2'] 
+        code: 89099  
+        stock: 50 
+        status: true 
+        category: Categoria de producto 
+        owner: fajsñldfdasdsadfjasa.asdfjasldfa

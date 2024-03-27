@@ -1,4 +1,6 @@
 const { Router } = require('express')
+const swaggerJsDoc = require('swagger-jsdoc')
+const swaggerUiExpress = require('swagger-ui-express')
 const productRouter = require('./products.router.js')
 const cartRouter = require('./carts.router.js')
 const sessionRouter = require('./sessions.router.js')
@@ -14,6 +16,21 @@ router.post('/uploader', uploader.single('myFile'), (req, res)=>{
 
     res.send('Imagen subida')
 })
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: 'Documentación de app',
+            description: 'Api Docs'
+        }
+    },
+    apis: [`${__dirname}/../docs/*.yaml`]
+}
+
+const specs = swaggerJsDoc(swaggerOptions)
+
+router.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
+
 
 //RUTAS
 router.use('/',extractTokenData,viewsRouter);

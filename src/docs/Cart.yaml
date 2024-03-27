@@ -1,0 +1,455 @@
+paths:
+  /api/carts/:
+    post:
+      summary: Crea un nuevo carrito
+      tags:
+        - Cart
+      responses:
+        "200":
+          description: El carrito fue creado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Estado de la respuesta.
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        description: Id autogenerado de Mongo.
+                        example: "6603501890b3561291354e84"
+                      products:
+                        type: array
+                        description: Array de productos en el carrito.
+                        example: []
+                      __v:
+                        type: number
+                        description: Versión del documento en la base de datos.
+                        example: 0
+        "500":  
+          description: Error interno del server, usualmente por query defectuosa.
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+
+  /api/carts/{cid}:
+    get:
+      summary: Obtiene un carrito especifico
+      tags:
+        - Cart
+      parameters: 
+        - name: cid
+          in: path
+          required: true
+          description: El id del carrito que desea solicitar
+          schema: 
+            type: string
+      responses:
+        "200":
+          description: El carrito fue obtenido correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Estado de la respuesta.
+                    example: success
+                  data:
+                    type: object
+                    properties: 
+                      _id: 
+                        type: string
+                        description: Id autogenerados de Mongo.
+                        example: ObjectId("fajsñldf-.sadfjasa.asdfjasldfa")
+                      products: 
+                        type: array
+                        description: Array de productos en el carrito.
+                        items:
+                          type: object
+                          properties:
+                            product: 
+                              $ref: '#/components/schemas/Product'
+                            quantity:
+                              type: number
+                              description: Cantidad de un producto en el carrito.
+                              example: 10
+                            _id: 
+                              type: string
+                              description: Id autogenerados de Mongo.
+                              example: ObjectId("fajsdasfgfrhgtr55hjdfjasldfa")
+                      __v:
+                        type: number
+                        description: Versión del documento en la base de datos.
+                        example: 0
+        "500":  
+          description: Error interno del server, usualmente por query defectuosa.
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Actualiza los productos en el carrito
+      tags:
+        - Cart
+      parameters: 
+        - name: cid
+          in: path
+          required: true
+          description: El id del carrito que desea actualizar
+          schema: 
+            type: string
+      requestBody: 
+        required: true
+        content:
+          application/json:
+            schema: 
+              type: array
+              items:
+                type: object
+                properties:
+                  product:
+                    type: string
+                    description: Id del producto.
+                    example: "fajsñldf-.sadfjasa.asdfjasldfa"
+                  quantity:
+                    type: number
+                    description: Cantidad del producto.
+                    example: 10
+      responses:
+        "200":
+          description: El carrito fue actualizado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Estado de la respuesta.
+                    example: success
+                  data:
+                    $ref: '#/components/schemas/Cart'
+                  message:
+                    type: string
+                    description: Mensaje de la respuesta.
+                    example: La accion se realizo satisfactoriamente
+        "500":  
+          description: Error interno del server, usualmente por query defectuosa.
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Borra todos los productos de un carrito especifico
+      tags:
+        - Cart
+      parameters: 
+        - name: cid
+          in: path
+          required: true
+          description: El id del carrito que desea limpiar
+          schema: 
+            type: string
+      responses:
+        "200":
+          description: El carrito fue limpiado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Estado de la respuesta.
+                    example: success
+                  message:
+                    type: string
+                    description: Mensaje de la respuesta.
+                    example: La accion se realizo satisfactoriamente
+        "500":  
+          description: Error interno del server, usualmente por query defectuosa.
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+  /api/carts/{cid}/product/{pid}:
+    post:
+      summary: Agrega un producto al carrito
+      tags:
+        - Cart
+      parameters: 
+        - name: cid
+          in: path
+          required: true
+          description: El id del carrito que desea actualizar
+          schema: 
+            type: string
+        - name: pid
+          in: path
+          required: true
+          description: El id del producto que desea agregar
+          schema: 
+            type: string
+      responses:
+        "200":
+          description: El producto fue agregado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Estado de la respuesta.
+                    example: success
+                  data:
+                    $ref: '#/components/schemas/Cart'
+                  message:
+                    type: string
+                    description: Mensaje de la respuesta.
+                    example: La accion se realizo satisfactoriamente
+        "500":  
+          description: Error interno del server, usualmente por query defectuosa.
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+  /api/carts/{cid}/products/{pid}:
+    put:
+      summary: Actualiza la cantidad de un producto en el carrito
+      tags:
+        - Cart
+      parameters: 
+        - name: cid
+          in: path
+          required: true
+          description: El id del carrito que desea actualizar
+          schema: 
+            type: string
+        - name: pid
+          in: path
+          required: true
+          description: El id del producto que desea actualizar
+          schema: 
+            type: string
+      requestBody: 
+        required: true
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties: 
+                quantity:
+                  type: number
+                  description: Cantidad del producto a cambiar
+                  example: 6
+      responses:
+        "200":
+          description: El producto fue actualizado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Estado de la respuesta.
+                    example: success
+                  data:
+                    $ref: '#/components/schemas/Cart'
+                  message:
+                    type: string
+                    description: Mensaje de la respuesta.
+                    example: La accion se realizo satisfactoriamente
+        "500":  
+          description: Error interno del server, usualmente por query defectuosa.
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Eliminar un producto del carrito
+      tags:
+        - Cart
+      parameters: 
+        - name: cid
+          in: path
+          required: true
+          description: El id del carrito que desea actualizar
+          schema: 
+            type: string
+        - name: pid
+          in: path
+          required: true
+          description: El id del producto que desea eliminar
+          schema: 
+            type: string
+      responses:
+        "200":
+          description: El producto fue eliminado del carrito correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Estado de la respuesta.
+                    example: success
+                  result:
+                    type: object
+                    properties: 
+                      acknowledged: 
+                        type: boolean
+                        description: Indica si la operación fue realizada con éxito.
+                        example: true
+                      modifiedCount: 
+                        type: integer
+                        description: Cantidad de documentos modificados.
+                        example: 1
+                      upsertedId: 
+                        type: string
+                        description: Id del documento insertado.
+                        example: null
+                      upsertedCount: 
+                        type: integer
+                        description: Cantidad de documentos insertados.
+                        example: 0
+                      matchedCount: 
+                        type: integer
+                        description: Cantidad de documentos coincidentes.
+                        example: 1
+                  message:
+                    type: string
+                    description: Mensaje de la respuesta.
+                    example: La accion se realizo satisfactoriamente
+        "500":  
+          description: Error interno del server, usualmente por query defectuosa.
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+  /api/carts/{cid}/purchase:
+    post:
+      summary: Genera una ticket
+      tags:
+        - Cart
+      parameters: 
+        - name: cid
+          in: path
+          required: true
+          description: El id del carrito que desea ordenar
+          schema: 
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Correo electrónico del usuario que genera el ticket.
+                  example: correo@email.com
+      responses:
+        "200":
+          description: Orden generada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Estado de la respuesta.
+                    example: success
+                  payload:
+                    type: object
+                    properties: 
+                      code: 
+                        type: string
+                        description: Codigo de ticket generado.
+                        example: djsajkdsabfabskfnalsfnlasnfawi
+                      purchase_datetime: 
+                        type: string
+                        description: Fecha de ticket generado.
+                        example: '10/02/2024'
+                      amount: 
+                        type: number
+                        description: Precio total de productos ordenados.
+                        example: 1400
+                      purchaser: 
+                        type: string
+                        description: Correo del usuario que lo genero.
+                        example: correo@email.com
+                      _id:
+                        type: string
+                        description: Id del ticket generado
+                        example: 73582hrfiu32342
+                      __v:
+                        type: number
+                        description: Versión del documento en la base de datos.
+                        example: 0
+                  productsNotProcessed:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        product:
+                          type: string
+                          description: Id del producto no procesado
+                          example: dweiuagd8qwgiqdfbf
+                        quantity:
+                          type: number
+                          description: Cantidad del producto no procesado
+                          example: 18
+        "500":  
+          description: Error interno del server, usualmente por query defectuosa.
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+
+
+components:
+  schemas:
+    Cart: 
+      type: object
+      properties: 
+        _id: 
+          type: string
+          description: Id autogenerados de Mongo.
+          example: ObjectId("fajsñldf-.sadfjasa.asdfjasldfa")
+        products: 
+          type: array
+          description: Array de productos en el carrito.
+          items:
+            type: object
+            properties:
+              product: 
+                type: string
+                description: Id del producto.
+                example: ObjectId("hdfsabfefeaswkfh2ifb23823f32")
+              quantity:
+                type: number
+                description: Cantidad de un producto en el carrito.
+                example: 10
+              _id: 
+                type: string
+                description: Id autogenerados de Mongo.
+                example: ObjectId("fajsdasfgfrhgtr55hjdfjasldfa")
+        __v:
+          type: number
+          description: Versión del documento en la base de datos.
+          example: 0

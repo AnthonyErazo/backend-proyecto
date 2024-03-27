@@ -4,6 +4,7 @@ const { productModel } = require('./models/products.model');
 const { generateTicketErrorInfo } = require('../../utils/error/generateInfoError');
 const { enumActionsErrors } = require('../../utils/error/enumActionsErrors');
 const { enumErrors } = require('../../utils/error/errorEnum');
+const CustomError = require('../../utils/error/customErrors');
 
 function generateUniqueCode() {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
