@@ -1,4 +1,3 @@
-const { Types } = require('mongoose');
 const { productModel } = require('./models/products.model');
 const CustomError = require('../../utils/error/customErrors');
 const { enumErrors } = require('../../utils/error/errorEnum');
@@ -119,7 +118,7 @@ class ProductDaoMongo {
 
     async update(pid, updatedFields) {
 
-        const existingProduct = await this.model.findOne({ _id: new ObjectId(pid) });
+        const existingProduct = await this.model.findOne({ _id: pid });
 
         if (existingProduct) {
             if (updatedFields.id && updatedFields.id !== pid.toString()) {
@@ -138,7 +137,7 @@ class ProductDaoMongo {
                     obj[key] = updatedFields[key];
                     return obj;
                 }, {});
-            const result = await this.model.updateOne({ _id: new ObjectId(pid) }, sanitizedProduct);
+            const result = await this.model.updateOne({ _id: pid }, sanitizedProduct);
             if (result.modifiedCount > 0) {
                 return { status: "success", message: 'Producto actualizado correctamente' };
             } else {

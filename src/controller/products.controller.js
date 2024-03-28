@@ -69,7 +69,8 @@ class ProductsController {
     deleteProduct = async (req, res) => {
         try {
             const { pid } = req.params;
-            const newProducts = await this.service.deleteProduct(pid);
+            const idUser=req.body.idUser
+            const newProducts = await this.service.deleteProduct(pid,idUser);
             return res.status(200).json(newProducts);
         } catch (error) {
             logger.error('Error al eliminar producto:', error);

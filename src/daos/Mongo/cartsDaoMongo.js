@@ -134,6 +134,9 @@ class CartDaoMongo {
 
         return { success: "success", data: updatedCart, message: 'Productos en el carrito actualizados correctamente' };
     }
+    async deleteCart(cid) {
+        return await this.model.deleteOne({_id:cid});
+    }
 
 
 }

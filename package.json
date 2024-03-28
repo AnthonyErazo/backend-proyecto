@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha src/test/TestingApp.test.js",
     "start": "node src/app.js",
     "start:dev": "node --watch src/app.js",
     "dev": "nodemon src/app.js"
@@ -40,6 +40,9 @@
     "winston": "^3.11.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "chai": "^4.3.7",
+    "mocha": "^10.1.0",
+    "nodemon": "^3.0.1",
+    "supertest": "^6.3.4"
   }
 }
