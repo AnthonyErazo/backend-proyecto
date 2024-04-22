@@ -12,8 +12,7 @@ const { extractTokenData } = require('../middleware/extractTokenData.middleware.
 
 const router = Router();
 
-router.post('/uploader', uploader.single('myFile'), (req, res)=>{
-
+router.post('/uploader', uploader.single('file'), (req, res)=>{
     res.send('Imagen subida')
 })
 const swaggerOptions = {

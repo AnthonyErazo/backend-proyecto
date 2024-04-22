@@ -66,7 +66,7 @@ describe('Testing de aplicacion', () => {
                 value:cookieResponse.split('=')[1]
             }
             decodedToken = jwt.decode(cookie.value.split(';')[0]);
-            expect(cookie.name).to.be.ok.and.eql('token')
+            expect(cookie.name).to.be.ok.and.equal('token')
             expect(cookie.value).to.be.ok
             expect(decodedToken).to.have.property('id');
         })

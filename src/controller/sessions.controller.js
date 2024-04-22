@@ -80,7 +80,7 @@ class SessionsController {
                     code: enumErrors.INVALID_TYPES_ERROR
                 })
             }
-
+            await userService.updateUser(userFound._id,{last_connection:null})
             const token = createToken({ id: userFound._id, role: userFound.role })
             res.cookie(configObject.Cookie_auth, token, {
                 maxAge: 60 * 60 * 1000 * 24,
@@ -124,8 +124,9 @@ class SessionsController {
         }
     }
     logout = async (req, res) => {
+        await userService.updateUser(req.user.id,{last_connection:new Date()})
         res.clearCookie(configObject.Cookie_auth);
-        res.redirect('/');
+        res.redirect('/products');
     }
     current = async (req, res) => {
         try {

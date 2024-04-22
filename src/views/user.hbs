@@ -1,6 +1,16 @@
 <main>
   <section class="userContainer">
     <div>
+      {{#if role}}
+        <div>
+          <h3 class="title">Convertirse a usuario Premium</h3>
+          <form action="/api/users/{{id_user}}/documents?type=documents" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" multiple >
+            <button type="submit">Subir Archivos</button>
+          </form>
+        </div>
+      {{/if}}
+      
       <h3 class="title">Perfil de Usuario</h3>
       <ul class="listUser">
         <li>

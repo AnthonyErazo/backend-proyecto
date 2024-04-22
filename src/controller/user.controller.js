@@ -5,10 +5,10 @@ class UserController {
     constructor() {
         this.service = userService
     }
-    getDataUser=async (req,res)=>{
+    getDataUser = async (req, res) => {
         try {
             const { uid } = req.params;
-            const user=await this.service.getUser({_id:uid},true);
+            const user = await this.service.getUser({ _id: uid }, true);
             return res.status(200).json(user);
         } catch (error) {
             logger.error('Error al cambiar role de usuario:', error);
@@ -20,10 +20,10 @@ class UserController {
             });
         }
     }
-    userRoleChange=async(req,res)=>{
+    userRoleChange = async (req, res) => {
         try {
             const { uid } = req.params;
-            const user=await this.service.changeRole(uid);
+            const user = await this.service.changeRole(uid);
             return res.status(200).json(user);
         } catch (error) {
             logger.error('Error al cambiar role de usuario:', error);
@@ -35,10 +35,10 @@ class UserController {
             });
         }
     }
-    deleteUser=async (req,res)=>{
+    deleteUser = async (req, res) => {
         try {
             const { uid } = req.params;
-            const user=await this.service.deleteUser(uid);
+            const user = await this.service.deleteUser(uid);
             await cartsService.deleteCart(user.payload.cart);
             return res.status(200).json(user);
         } catch (error) {
@@ -49,6 +49,25 @@ class UserController {
                 error: error.message,
                 cause: error.cause
             });
+        }
+    }
+    userDocuments = async (req, res) => {
+        try {
+            const userId = req.params.uid;
+
+            if (!res.req.files || res.req.files.length === 0) {
+                return res.status(400).send('No se recibió ningún archivo');
+            }
+
+            const documents = res.req.files.map(file => ({
+                name: file.filename,
+                reference: file.path
+            }));
+            await this.service.updateUser(userId, {documents});
+            res.send('Documento subido exitosamente');
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Error al subir el documento');
         }
     }
 }
