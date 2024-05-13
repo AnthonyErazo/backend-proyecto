@@ -9,6 +9,8 @@ const pruebasRouter = require('./pruebas.router.js')
 const userRouter = require('./user.router.js')
 const { uploader } = require('../utils/uploader.js')
 const { extractTokenData } = require('../middleware/extractTokenData.middleware.js')
+const jwt = require('jsonwebtoken');
+const { configObject } = require('../config/configObject.js')
 
 const router = Router();
 
@@ -33,6 +35,19 @@ router.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 
 //RUTAS
 router.use('/',extractTokenData,viewsRouter);
+router.get('/extractToken', (req, res) => {
+    const token = req.cookies.token; // Suponiendo que el token está almacenado en cookies
+    if (!token) {
+        return res.status(401).json({ message: 'Token no proporcionado' });
+    }
+    try {
+        const decodedToken = jwt.verify(token, configObject.Jwt_private_key);
+        res.json(decodedToken);
+    } catch (error) {
+        return res.status(401).json({ message: 'Token inválido' });
+    }
+});
+
 router.use('/api/products', productRouter);
 router.use('/api/carts', cartRouter);
 router.use('/api/sessions', sessionRouter);

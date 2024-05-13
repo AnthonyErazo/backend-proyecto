@@ -4,6 +4,7 @@ const { enumErrors } = require('../../utils/error/errorEnum.js');
 const { generateUserErrorInfo } = require('../../utils/error/generateInfoError.js');
 const { usersModel } = require('./models/user.model.js');
 const { ObjectId } = require('mongoose').Types;
+const { sendMail } = require("../../utils/sendMail.js")
 
 class UserDaoMongo {
     constructor() {
@@ -20,8 +21,8 @@ class UserDaoMongo {
 
         if (payload.length > 0) {
             const payloadWithoutPassword = payload.map(user => {
-                const { password, ...userWithoutPassword } = user;
-                return userWithoutPassword;
+                const { first_name, last_name, email, role,last_connection,documents } = user;
+                return { first_name, last_name, email, role,last_connection,documents };
             });
             return {
                 status: "success",
@@ -111,6 +112,30 @@ class UserDaoMongo {
             return { status: "success", message: 'Usuario eliminado correctamente', payload: UserDelete }
         } else {
             throw new Error('Usuario no encontrado')
+        }
+    }
+    async deleteUserInactive() {
+        const currentDate = new Date();
+        const twoDaysAgo = new Date(currentDate.getTime() - 2 * 24 * 60 * 60 * 1000);
+        const usersToDelete = await this.model.find({
+            last_connection: {
+                $lt: twoDaysAgo
+            }
+        }).lean();
+        if (usersToDelete.length > 0) {
+            for (const user of usersToDelete) {
+                try {
+                    await this.model.findOneAndDelete({ _id: user._id }).lean();
+                    const to = user.email
+                    const subject = 'Cuenta eliminada por inactividad'
+                    const html = `<div>
+                    <h2>Tu cuenta ha sido eliminada por inactividad</h2>
+                </div>`
+                    sendMail(to, subject, html)
+                } catch (error) {
+                    console.error('Error al eliminar usuario o enviar correo electrónico:', error);
+                }
+            }
         }
     }
 }

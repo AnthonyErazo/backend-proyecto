@@ -34,9 +34,11 @@ class ViewsController {
         }
     }
     logout = async (req, res) => {
-        await userService.updateUser(req.user.id,{last_connection:new Date()})
+        if (req.user.role!='admin') {
+            await userService.updateUser(req.user.id,{last_connection:new Date()})
+        }
         res.clearCookie(configObject.Cookie_auth);
-        res.redirect('/products');
+        res.status(200).send({})
     }
     home = async (req, res) => {
         const user = await dataUser(req, res)

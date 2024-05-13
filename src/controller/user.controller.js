@@ -7,7 +7,7 @@ class UserController {
     }
     getDataUser = async (req, res) => {
         try {
-            const { uid } = req.params;
+            const {uid}=req.params
             const user = await this.service.getUser({ _id: uid }, true);
             return res.status(200).json(user);
         } catch (error) {
@@ -23,6 +23,10 @@ class UserController {
     userRoleChange = async (req, res) => {
         try {
             const { uid } = req.params;
+            // const {payload}=await this.service.getUser({_id:uid},true);
+            // payload.documents.map(document=>{
+            //     document.filename
+            // })
             const user = await this.service.changeRole(uid);
             return res.status(200).json(user);
         } catch (error) {
@@ -68,6 +72,34 @@ class UserController {
         } catch (error) {
             console.error(error);
             res.status(500).send('Error al subir el documento');
+        }
+    }
+    getUsers=async (req,res)=>{
+        try {
+            const users = await this.service.getUsers();
+            return res.status(200).json(users);
+        } catch (error) {
+            logger.error('Error al traer usuarios:', error);
+            return res.status(500).json({
+                status: 'error',
+                message: 'Error al traer usuarios.',
+                error: error.message,
+                cause: error.cause
+            });
+        }
+    }
+    deleteUserInactive=async(req,res)=>{
+        try {
+            const users = await this.service.deleteUserInactive();
+            return res.status(200).json(users);
+        } catch (error) {
+            logger.error('Error al traer usuarios:', error);
+            return res.status(500).json({
+                status: 'error',
+                message: 'Error al traer usuarios.',
+                error: error.message,
+                cause: error.cause
+            });
         }
     }
 }

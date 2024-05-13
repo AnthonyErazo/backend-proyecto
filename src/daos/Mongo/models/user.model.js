@@ -15,7 +15,7 @@ const usersSchema = Schema({
             reference: {type: String}
         }
     ]},
-    last_connection: { type: Date, default: null }
+    last_connection: { type: Schema.Types.Mixed, default: null }
 })
 
 

@@ -34,6 +34,7 @@ class SessionsController {
                 birthdate: userData.birthdate,
                 email: userData.email,
                 password: createHash(userData.password),
+                last_connection:new Date(),
                 cart: cart.data._id,
             };
 
@@ -56,7 +57,6 @@ class SessionsController {
             const userData = validateFields(req.body, requieredfield);
             if (userData.email === configObject.Admin_user_email && userData.password === configObject.Admin_user_password) {
                 const token = createToken({
-                    first_name: 'admin',
                     email: configObject.Admin_user_email,
                     role: 'admin'
                 });
@@ -80,8 +80,11 @@ class SessionsController {
                     code: enumErrors.INVALID_TYPES_ERROR
                 })
             }
-            await userService.updateUser(userFound._id,{last_connection:null})
-            const token = createToken({ id: userFound._id, role: userFound.role })
+            await userService.updateUser(userFound._id,{last_connection:true})
+            const token = createToken({ 
+                id: userFound._id, 
+                role: userFound.role, 
+                cart: userFound.cart})
             res.cookie(configObject.Cookie_auth, token, {
                 maxAge: 60 * 60 * 1000 * 24,
                 httpOnly: true,
@@ -124,9 +127,11 @@ class SessionsController {
         }
     }
     logout = async (req, res) => {
-        await userService.updateUser(req.user.id,{last_connection:new Date()})
+        if (req.user.role!='admin') {
+            await userService.updateUser(req.user.id,{last_connection:new Date()})
+        }
         res.clearCookie(configObject.Cookie_auth);
-        res.redirect('/products');
+        res.status(200).send({})
     }
     current = async (req, res) => {
         try {
