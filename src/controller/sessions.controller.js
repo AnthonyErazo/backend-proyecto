@@ -64,6 +64,7 @@ class SessionsController {
                     maxAge: 60 * 60 * 1000 * 24,
                     httpOnly: true,
                     secure: true,
+                    sameSite: 'None',
                     credentials: true
                 });
                 return res.status(200).json({ message: 'Login successful' });
@@ -88,6 +89,7 @@ class SessionsController {
                 maxAge: 60 * 60 * 1000 * 24,
                 httpOnly: true,
                 secure: true,
+                sameSite: 'None',
                 credentials: true
             });
             return res.status(200).json({ message: 'Login successful' });
