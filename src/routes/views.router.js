@@ -2,7 +2,7 @@ const handlebars = require('handlebars')
 const { Router } = require('express')
 const { authentication } = require('../middleware/auth.middleware')
 const ViewsController = require('../controller/views.controller')
-const { isUserOrPremium,isUser, isAdminOrPremium } = require('../utils/verifiqueRole')
+const { isUserOrPremium,isUser, isAdminOrPremium } = require('../middleware/verifiqueRole.middleware')
 
 
 const {

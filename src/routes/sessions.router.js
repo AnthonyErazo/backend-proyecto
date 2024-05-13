@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const passport = require('passport')
 const SessionsController = require('../controller/sessions.controller');
-const { isAdmin } = require('../utils/verifiqueRole');
+const { isAdmin } = require('../middleware/verifiqueRole.middleware.js');
 const { extractTokenData } = require('../middleware/extractTokenData.middleware.js')
 
 const {

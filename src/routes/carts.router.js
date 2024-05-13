@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const CartsController = require('../controller/cart.controller');
+const { isUserOrPremium } = require('../middleware/verifiqueRole.middleware');
 
 const {
     getProductsByCartId,
@@ -19,7 +20,7 @@ router
     .get('/:cid', getProductsByCartId)
     .put('/:cid', updateProductsInCart)
     .delete('/:cid', removeAllProductsByCartId)
-    .post('/:cid/product/:pid', addProductByCartId)
+    .post('/:cid/product/:pid',isUserOrPremium, addProductByCartId)
     .put('/:cid/products/:pid', updateProductQuantity)
     .delete('/:cid/products/:pid', removeProductByCartId)
     .post('/:cid/purchase', purchaseCart)

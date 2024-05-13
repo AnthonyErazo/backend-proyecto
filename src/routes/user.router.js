@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const UserController = require('../controller/user.controller');
 const { uploader } = require('../utils/uploader');
-const { isUser, isAdmin } = require('../utils/verifiqueRole');
+const { isUser, isAdmin } = require('../middleware/verifiqueRole.middleware');
 
 const {
     userRoleChange,
