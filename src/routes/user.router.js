@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const UserController = require('../controller/user.controller');
 const { uploader } = require('../utils/uploader');
+const { isUser, isAdmin } = require('../utils/verifiqueRole');
 
 const {
     userRoleChange,
@@ -14,11 +15,11 @@ const {
 const router = Router();
 
 router
-    .post('/premium/:uid', userRoleChange)
-    .post('/:uid/documents',uploader.array('file'), userDocuments)
-    .delete('/:uid', deleteUser)
-    .delete('/', deleteUserInactive)
-    .get('/', getUsers)
+    .post('/premium/:uid', isAdmin,userRoleChange)
+    .delete('/', isAdmin,deleteUserInactive)
+    .delete('/:uid', isAdmin,deleteUser)
+    .get('/', isAdmin,getUsers)
+    .post('/:uid/documents',isUser,uploader.array('file'), userDocuments)
     .get('/:uid', getDataUser);
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const ProductsController = require('../controller/products.controller');
+const { isAdminOrPremium } = require('../utils/verifiqueRole');
 
 const { 
     getProducts,
@@ -14,8 +15,8 @@ const router = Router();
 router
     .get('/', getProducts)
     .get('/:pid', getProductById)
-    .post('/', addProduct)
-    .put('/:pid', updateProduct)
-    .delete('/:pid', deleteProduct)
+    .post('/', isAdminOrPremium ,addProduct)
+    .put('/:pid', isAdminOrPremium,updateProduct)
+    .delete('/:pid', isAdminOrPremium,deleteProduct)
 
 module.exports = router;
