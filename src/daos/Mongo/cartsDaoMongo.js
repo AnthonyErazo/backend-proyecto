@@ -30,17 +30,16 @@ class CartDaoMongo {
         }
     }
 
-    async addProductBy(cid, pid) {
+    async addProductBy(cid, pid,quantityProduct=1) {
         const cart = await this.model.findOneAndUpdate(
             { _id: new ObjectId(cid), "products.product": new ObjectId(pid) },
-            { $inc: { "products.$.quantity": 1 } },
+            { $inc: { "products.$.quantity": quantityProduct } },
             { new: true }
         );
-
         if (!cart) {
             const newCart = await this.model.findOneAndUpdate(
                 { _id: new ObjectId(cid), "products.product": { $ne: new ObjectId(pid) } },
-                { $push: { products: { product: pid, quantity: 1 } } },
+                { $push: { products: { product: pid, quantity: quantityProduct } } },
                 { new: true }
             );
 

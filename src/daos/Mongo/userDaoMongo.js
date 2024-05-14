@@ -16,13 +16,25 @@ class UserDaoMongo {
             page: parseInt(page),
             lean: true,
         };
-
-        const { docs: payload, ...rest } = await this.model.paginate(filter, options);
+        let parsedQuery = {};
+        if (filter) {
+            try {
+                parsedQuery = JSON.parse(filter);
+            } catch (error) {
+                CustomError.createError({
+                    name: "USER ERROR",
+                    code: enumErrors.INVALID_TYPES_ERROR,
+                    message: generateUserErrorInfo(1, enumActionsErrors.ERROR_GET),
+                    cause: "Error al analizar el parámetro de consulta JSON",
+                })
+            }
+        }
+        const { docs: payload, ...rest } = await this.model.paginate(parsedQuery, options);
 
         if (payload.length > 0) {
             const payloadWithoutPassword = payload.map(user => {
-                const { first_name, last_name, email, role,last_connection,documents } = user;
-                return { first_name, last_name, email, role,last_connection,documents };
+                const { _id,first_name, last_name, email,birthdate, role,last_connection,documents } = user;
+                return { _id,first_name, last_name, email,birthdate, role,last_connection,documents };
             });
             return {
                 status: "success",
@@ -35,7 +47,7 @@ class UserDaoMongo {
             CustomError.createError({
                 name: "USER ERROR",
                 code: enumErrors.DATABASE_ERROR,
-                message: generateProductErrorInfo(payload, enumActionsErrors.ERROR_GET),
+                message: generateUserErrorInfo(payload, enumActionsErrors.ERROR_GET),
                 cause: 'No hay usuarios disponibles',
             })
         }

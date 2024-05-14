@@ -130,6 +130,7 @@ class SessionsController {
         if (req.user.role!='admin') {
             await userService.updateUser(req.user.id,{last_connection:new Date()})
         }
+        req.user=null
         res.clearCookie(configObject.Cookie_auth);
         res.status(200).send({})
     }

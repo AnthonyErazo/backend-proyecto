@@ -9,7 +9,8 @@ const {
     getDataUser,
     userDocuments,
     getUsers,
-    deleteUserInactive
+    deleteUserInactive,
+    donwloadDocuments
 } = new UserController()
 
 const router = Router();
@@ -20,6 +21,7 @@ router
     .delete('/:uid', isAdmin,deleteUser)
     .get('/', isAdmin,getUsers)
     .post('/:uid/documents',isUser,uploader.array('file'), userDocuments)
-    .get('/:uid', getDataUser);
+    .get('/:uid', getDataUser)
+    .get('/documents/:uid', isAdmin,donwloadDocuments);
 
 module.exports = router;

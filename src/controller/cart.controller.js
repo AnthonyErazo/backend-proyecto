@@ -37,9 +37,10 @@ class CartsController {
     }
     addProductByCartId = async (req, res) => {
         try {
+            const {quantityProduct=1}=req.body
             const { cid, pid } = req.params;
             await productsService.getProduct({ _id: pid });
-            const newCart = await this.service.addProductByCartId(cid, pid);
+            const newCart = await this.service.addProductByCartId(cid, pid,quantityProduct);
             return res.status(200).json(newCart);
         } catch (error) {
             logger.error('Error al agregar producto al carrito:', error);
