@@ -20,7 +20,7 @@ router
     .get('/:cid', getProductsByCartId)
     .put('/:cid', updateProductsInCart)
     .delete('/:cid', removeAllProductsByCartId)
-    .post('/:cid/product/:pid',isUserOrPremium, addProductByCartId)
+    .post('/:cid/product/:pid',addProductByCartId)
     .put('/:cid/products/:pid', updateProductQuantity)
     .delete('/:cid/products/:pid', removeProductByCartId)
     .post('/:cid/purchase', purchaseCart)

@@ -11,7 +11,7 @@ const { uploader } = require('../utils/uploader.js')
 const { extractTokenData } = require('../middleware/extractTokenData.middleware.js')
 const jwt = require('jsonwebtoken');
 const { configObject } = require('../config/configObject.js')
-const { isUser, isUserOrPremium } = require('../middleware/verifiqueRole.middleware.js')
+const { isUserOrPremium, isUser } = require('../middleware/verifiqueRole.middleware.js')
 
 const router = Router();
 
@@ -43,6 +43,7 @@ router.get('/extractToken', (req, res) => {
     }
     try {
         const decodedToken = jwt.verify(token, configObject.Jwt_private_key);
+        res.req.user=decodedToken
         res.json(decodedToken);
     } catch (error) {
         return res.status(401).json({ message: 'Token inválido' });
@@ -50,7 +51,7 @@ router.get('/extractToken', (req, res) => {
 });
 
 router.use('/api/products', productRouter);
-router.use('/api/carts',isUserOrPremium,cartRouter);
+router.use('/api/carts', isUserOrPremium,cartRouter);
 router.use('/api/sessions', sessionRouter);
 router.use('/api/users', userRouter);
 router.use('/pruebas', pruebasRouter);

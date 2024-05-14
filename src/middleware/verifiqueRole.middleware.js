@@ -7,7 +7,6 @@ exports.isAdmin=(req, res, next)=>{
 }
 
 exports.isUser=(req, res, next)=>{
-    console.log(req.user)
     if (req.user&&req.user.role === 'user') {
         next()
     } else {
@@ -34,6 +33,6 @@ exports.isUserOrPremium=(req, res, next)=>{
     if (req.user&&(req.user.role=== 'premium'||req.user.role === 'user')) {
         next();
     } else {
-        res.status(403).send('No tiene permiso para realizar esta acción');
+        res.status(403).send('Access forbidden');
     }
 }
