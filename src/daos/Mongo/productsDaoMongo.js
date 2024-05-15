@@ -102,6 +102,7 @@ class ProductDaoMongo {
             owner = 'admin'
         } = product;
 
+        
         if (!(title && description && price && code && stock && category && owner)) {
             CustomError.createError({
                 name: "PRODUCT ERROR",

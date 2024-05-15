@@ -1,0 +1,24 @@
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al modificar producto: One or more properties were incomplete or not valid.
+List of required properties
+- Product not updated: no product found for the specified update operation {"cause":"Ningún cambio realizado en el producto","code":3,"name":"PRODUCT ERROR","stack":"PRODUCT ERROR: One or more properties were incomplete or not valid.\nList of required properties\n- Product not updated: no product found for the specified update operation\n    at CustomError.createError (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\utils\\error\\customErrors.js:3:21)\n    at ProductDaoMongo.update (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\daos\\Mongo\\productsDaoMongo.js:145:29)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async ProductsRepository.updateProduct (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\repositories\\products.repository.js:9:53)\n    at async updateProduct (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\controller\\products.controller.js:57:33)"}
+error: Error al modificar producto: One or more properties were incomplete or not valid.
+List of required properties
+- Product not updated: no product found for the specified update operation {"cause":"Ningún cambio realizado en el producto","code":3,"name":"PRODUCT ERROR","stack":"PRODUCT ERROR: One or more properties were incomplete or not valid.\nList of required properties\n- Product not updated: no product found for the specified update operation\n    at CustomError.createError (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\utils\\error\\customErrors.js:3:21)\n    at ProductDaoMongo.update (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\daos\\Mongo\\productsDaoMongo.js:145:29)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async ProductsRepository.updateProduct (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\repositories\\products.repository.js:9:53)\n    at async updateProduct (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\controller\\products.controller.js:57:33)"}
+error: Error al verificar el token:
+error: Error al verificar el token:

@@ -15,8 +15,17 @@ const { isUserOrPremium, isUser } = require('../middleware/verifiqueRole.middlew
 
 const router = Router();
 
-router.post('/uploader', uploader.single('file'), (req, res)=>{
-    res.send('Imagen subida')
+router.post('/uploader', uploader.array('file'), (req, res)=>{
+    try {
+        const uploadedFiles = req.files.map(file => ({
+            originalName: file.originalname,
+            filePath: file.path
+        }));
+        res.json({ payload:uploadedFiles });
+    } catch (error) {
+        logger.error(error);
+        res.status(500).json({ message: 'Error al subir las imágenes' });
+    }
 })
 const swaggerOptions = {
     definition: {
