@@ -1,0 +1,26 @@
+###
+POST http://localhost:8080/api/sessions/register
+Content-Type: application/json
+
+{
+    "first_name":"nombre",
+    "last_name":"apellido",
+    "email":"email@email.com",
+    "birthdate":"2020-12-31T00:00:00.000+00:00",
+    "password":"1234567"
+}
+
+###
+POST http://localhost:8080/api/sessions/login
+Content-Type: application/json
+
+{
+    "email":"email@email.com",
+    "password":"1234567"
+}
+
+###
+GET http://localhost:8080/api/sessions/logout
+
+###
+GET http://localhost:8080/api/sessions/current

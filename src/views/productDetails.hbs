@@ -1,0 +1,14 @@
+<h1>{{title}}</h1>
+
+<div>
+    <p><strong>Name: </strong>{{product.title}} </p>
+    <p><strong>Description: </strong>{{product.description}}</p>
+    <p><strong>Price: </strong>{{product.price}} </p>
+    <p><strong>Stock: </strong>{{product.stock}}</p>
+    <p><strong>Category: </strong>{{product.description}}</p>
+    <div style="position: relative;">
+        <p id="addCorrectMsg{{product._id}}" style="display: none;position:absolute;right:10vh;top:-20px;">Agregado correctamente</p>
+    </div>
+    <button class="addToCartBtn" data-product-id="{{product._id}}">Agregar al carrito</button>
+</div>
+<script src="/js/addProductCart.js"></script>

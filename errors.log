@@ -1,0 +1,93 @@
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al modificar producto: One or more properties were incomplete or not valid.
+List of required properties
+- Product not updated: no product found for the specified update operation {"cause":"Ningún cambio realizado en el producto","code":3,"name":"PRODUCT ERROR","stack":"PRODUCT ERROR: One or more properties were incomplete or not valid.\nList of required properties\n- Product not updated: no product found for the specified update operation\n    at CustomError.createError (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\utils\\error\\customErrors.js:3:21)\n    at ProductDaoMongo.update (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\daos\\Mongo\\productsDaoMongo.js:145:29)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async ProductsRepository.updateProduct (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\repositories\\products.repository.js:9:53)\n    at async updateProduct (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\controller\\products.controller.js:57:33)"}
+error: Error al modificar producto: One or more properties were incomplete or not valid.
+List of required properties
+- Product not updated: no product found for the specified update operation {"cause":"Ningún cambio realizado en el producto","code":3,"name":"PRODUCT ERROR","stack":"PRODUCT ERROR: One or more properties were incomplete or not valid.\nList of required properties\n- Product not updated: no product found for the specified update operation\n    at CustomError.createError (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\utils\\error\\customErrors.js:3:21)\n    at ProductDaoMongo.update (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\daos\\Mongo\\productsDaoMongo.js:145:29)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async ProductsRepository.updateProduct (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\repositories\\products.repository.js:9:53)\n    at async updateProduct (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\controller\\products.controller.js:57:33)"}
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al insertar producto: One or more properties were incomplete or not valid.
+List of required properties
+- Product not found, received null
+- Product not found: no product found for the specified query {"cause":"No hay productos disponibles","code":3,"name":"PRODUCT ERROR","stack":"PRODUCT ERROR: One or more properties were incomplete or not valid.\nList of required properties\n- Product not found, received null\n- Product not found: no product found for the specified query\n    at CustomError.createError (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\utils\\error\\customErrors.js:3:21)\n    at ProductDaoMongo.getBy (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\daos\\Mongo\\productsDaoMongo.js:83:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async ProductsRepository.getProduct (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\repositories\\products.repository.js:7:39)\n    at async addProduct (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\controller\\products.controller.js:42:28)"}
+error: Error al insertar producto: product1 is not defined {"stack":"ReferenceError: product1 is not defined\n    at addProduct (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\controller\\products.controller.js:50:41)\n    at Layer.handle [as handle_request] (C:\\Users\\USER\\Desktop\\DesarrolloBack\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at next (C:\\Users\\USER\\Desktop\\DesarrolloBack\\node_modules\\express\\lib\\router\\route.js:144:13)\n    at done (C:\\Users\\USER\\Desktop\\DesarrolloBack\\node_modules\\multer\\lib\\make-middleware.js:45:7)\n    at indicateDone (C:\\Users\\USER\\Desktop\\DesarrolloBack\\node_modules\\multer\\lib\\make-middleware.js:49:68)\n    at Multipart.<anonymous> (C:\\Users\\USER\\Desktop\\DesarrolloBack\\node_modules\\multer\\lib\\make-middleware.js:166:7)\n    at Multipart.emit (node:events:514:28)\n    at emitCloseNT (node:internal/streams/destroy:132:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:81:21)"}
+error: Error al insertar producto: product1 is not defined {"stack":"ReferenceError: product1 is not defined\n    at addProduct (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\controller\\products.controller.js:50:41)\n    at Layer.handle [as handle_request] (C:\\Users\\USER\\Desktop\\DesarrolloBack\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at next (C:\\Users\\USER\\Desktop\\DesarrolloBack\\node_modules\\express\\lib\\router\\route.js:144:13)\n    at done (C:\\Users\\USER\\Desktop\\DesarrolloBack\\node_modules\\multer\\lib\\make-middleware.js:45:7)\n    at indicateDone (C:\\Users\\USER\\Desktop\\DesarrolloBack\\node_modules\\multer\\lib\\make-middleware.js:49:68)\n    at Multipart.<anonymous> (C:\\Users\\USER\\Desktop\\DesarrolloBack\\node_modules\\multer\\lib\\make-middleware.js:166:7)\n    at Multipart.emit (node:events:514:28)\n    at emitCloseNT (node:internal/streams/destroy:132:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:81:21)"}
+error: Error al insertar producto: product1 is not defined {"stack":"ReferenceError: product1 is not defined\n    at addProduct (C:\\Users\\USER\\Desktop\\DesarrolloBack\\src\\controller\\products.controller.js:50:41)\n    at Layer.handle [as handle_request] (C:\\Users\\USER\\Desktop\\DesarrolloBack\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at next (C:\\Users\\USER\\Desktop\\DesarrolloBack\\node_modules\\express\\lib\\router\\route.js:144:13)\n    at done (C:\\Users\\USER\\Desktop\\DesarrolloBack\\node_modules\\multer\\lib\\make-middleware.js:45:7)\n    at indicateDone (C:\\Users\\USER\\Desktop\\DesarrolloBack\\node_modules\\multer\\lib\\make-middleware.js:49:68)\n    at Multipart.<anonymous> (C:\\Users\\USER\\Desktop\\DesarrolloBack\\node_modules\\multer\\lib\\make-middleware.js:166:7)\n    at Multipart.emit (node:events:514:28)\n    at emitCloseNT (node:internal/streams/destroy:132:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:81:21)"}
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:
+error: Error al verificar el token:

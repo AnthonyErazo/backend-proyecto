@@ -1,0 +1,48 @@
+<div>
+    <h1>Bienvenidos a {{title}}</h1>
+
+    <div>
+        {{#each cartProducts}}
+        <li>
+            <strong>Name: </strong>{{this.product.title}} -
+            <strong>Description: </strong>{{this.product.description}} -
+            <strong>Price: </strong>{{this.product.price}} -
+            <strong>Stock: </strong>{{this.product.stock}} -
+            <strong>Quantity: </strong>{{this.quantity}}
+        </li>
+        {{/each}}
+        <button id="purchaseButton" data-cart="{{cart}}">Realizar compra</button>
+        <div id="errorMessage" style="display: none; color: red;"></div>
+        <div id="successMessage" style="display: none; color: green;"></div>
+    </div>
+</div>
+<script>
+    function showMessage(messageElement, messageText, color) {
+        messageElement.textContent = messageText;
+        messageElement.style.color = color;
+        messageElement.style.display = 'block';
+        setTimeout(() => {
+            messageElement.style.display = 'none';
+        }, 5000);
+    }
+    document.getElementById('purchaseButton').addEventListener('click', function () {
+        const cartId = this.dataset.cart;
+        fetch(`/api/carts/${cartId}/purchase`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+            body: JSON.stringify({})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.error){
+                showMessage(document.getElementById('errorMessage'), 'Ocurrió un error: ' + data.error, 'red');
+            } else {
+                {{!-- showMessage(document.getElementById('successMessage'), 'La compra se realizó correctamente, los productos no procesados se mostraran', 'green'); --}}
+                location.reload();
+            }
+        })
+        .catch(error => {
+            console.error(error)
+        });
+    });
+</script>

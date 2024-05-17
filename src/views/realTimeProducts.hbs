@@ -1,0 +1,57 @@
+<div>
+    <h1>{{title}}</h1>
+    <table>
+        <div>
+            <thead>
+                <tr>
+                    <td>Nombre</td>
+                    <td>Precio</td>
+                    <td>Stock</td>
+                    <td>Descripcion</td>
+                </tr>
+            </thead>
+            <tbody id="tableProducts">
+                {{#each products}}
+                <tr>
+                    <td>{{ this.title }}</td>
+                    <td>{{ this.price }}</td>
+                    <td>{{ this.stock }}</td>
+                    <td>{{ this.description }}</td>
+                    <td>
+                        <button onclick="deleteProduct('{{this._id}}','{{../idUser}}')">Borrar</button>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </div>
+        <div>
+            <h2>Add Product</h2>
+            <form id="addProductForm">
+                <div>
+                    <input type="text" id="title" name="title" placeholder="Ingrese título" required>
+                </div>
+                <div>
+                    <input type="text" id="description" name="description" placeholder="Ingrese descripción"
+                        required>
+                </div>
+                <div>
+                    <input type="number" id="price" name="price" placeholder="Ingrese precio" required>
+                </div>
+                <div>
+                    <input type="text" id="code" name="code" placeholder="Ingrese código" required>
+                </div>
+                <div>
+                    <input type="number" id="stock" name="stock" placeholder="Ingrese stock" required>
+                </div>
+                <div>
+                    <input type="text" id="category" name="category" placeholder="Ingrese categoria" required>
+                </div>
+                <div>
+                    <button type="button" onclick="addProduct('{{idUser}}')">Agregar</button>
+                </div>
+            </form>
+        </div>
+    </table>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/realTimeProducts.js"></script>

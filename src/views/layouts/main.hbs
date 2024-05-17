@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+</head>
+
+<body>
+  <header>
+    {{#if userName}}
+    <div class="title">
+      <div>
+        <a href="/user" class="userName">Bienvenido {{userName}}</a>
+        <p class="userRole">{{userRole}}</p>
+      </div>
+    </div>
+    {{/if}}
+    <nav class="nav">
+      <div class="navDiv">
+        <ul>
+          <li> <a href="/home">Inicio</a></li>
+          <li> <a href="/products">Productos</a></li>
+          <li> <a href="/realTimeProducts">Tiempo Real</a></li>
+          <li> <a href="/chat">Chat</a></li>
+          <li> <a href="/carts/{{cart}}">Carrito</a></li>
+          {{#if userName}}
+                <li><a href="/logout" class="btn btn-info">Log out</a></li>
+            {{else}}
+                <li><a href="/login" class="btn btn-info">Log in</a></li>
+                <li><a href="/register" class="btn btn-info">Register</a></li>
+            {{/if}}
+        </ul>
+      </div>
+    </nav>
+
+  </header>
+
+  {{{body}}}
+</body>
+
+</html>

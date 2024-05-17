@@ -1,0 +1,39 @@
+<main>
+    <div class="loginContainer">
+        <h3>REGISTRARSE</h3>
+        <form action="/api/sessions/register" method="post">
+            <div class="formContainer">
+                <p>Completar todos los datos para registrarse</p>
+                <hr>
+                <label for="first_name"><b>Nombre</b></label>
+                <input type="text" id="first_name" name="first_name" placeholder="Enter Name" required>
+
+                <label for="last_name"><b>Apellido</b></label>
+                <input type="text" id="last_name" name="last_name" placeholder="Enter Lastname">
+
+                <label for="email"><b>Email</b></label>
+                <input type="email" id="email" placeholder="Enter Email" name="email" required>
+
+                <label for="birthdate"><b>Birthdate</b></label>
+                <input type="date" id="birthdate" placeholder="Enter Birthdate" name="birthdate" required>
+
+                <label for="password"><b>Password</b></label>
+                <input type="password" id="password" placeholder="Enter Password" name="password"
+                    required>
+
+                <label for="psw-repeat"><b>Repeat Password</b></label>
+                <input type="password" id="psw-repeat" placeholder="Repeat Password" name="psw-repeat"
+                    required>
+
+                <div class="clearfix">
+                    <button type="submit" id="sigInSubmit">Registrarse</button>
+                </div>
+            </div>
+        </form>
+        <p class="" id="answer">{{answer}}</p>
+        <br>
+        <a class="link" href="/">Log in</a>
+    </div>
+</main>
+
+<script src="/js/register.js"></script>

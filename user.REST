@@ -1,0 +1,2 @@
+###
+POST http://localhost:8080/api/users/premium/65f8b021ea9a11d15271dc3a

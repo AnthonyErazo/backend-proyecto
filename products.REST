@@ -1,0 +1,36 @@
+###
+GET http://localhost:8080/api/products/
+
+###
+GET http://localhost:8080/api/products/658508c4e506d4d95a6a9131
+
+###
+POST http://localhost:8080/api/products/
+Content-Type: application/json
+
+{
+    "title": "producto20",
+    "description": "descripcion20",
+    "price": 3000,
+    "thumbnail": [
+        "url5",
+        "url8"
+    ],
+    "code": 9987,
+    "stock": 110,
+    "status": true,
+    "category": "category3"
+}
+
+###
+PUT http://localhost:8080/api/products/65deab21e571f8d2500f80e7
+Content-Type: application/json
+
+{
+    "title": "producto22",
+    "description": "descripcion10",
+    "price": 5000
+}
+
+###
+DELETE http://localhost:8080/api/products/65deab21e571f8d2500f80e7
